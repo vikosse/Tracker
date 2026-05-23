@@ -119,7 +119,7 @@ final class IrregularEventCreationViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .ypBackground
+        view.backgroundColor = .ypWhite
         presenter.view = self
         setupLayout()
         presenter.viewDidLoad()

@@ -64,7 +64,7 @@ final class ScheduleViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .ypBackground
+        view.backgroundColor = .ypWhite
         setupLayout()
         presenter?.viewDidLoad()
     }

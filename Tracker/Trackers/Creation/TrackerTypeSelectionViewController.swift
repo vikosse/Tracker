@@ -51,7 +51,7 @@ final class HabitTypeSelectionViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .ypBackground
+        view.backgroundColor = .ypWhite
         setupLayout()
     }
     
