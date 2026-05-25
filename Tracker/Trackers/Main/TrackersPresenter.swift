@@ -19,6 +19,7 @@ final class TrackersPresenter: TrackersPresenterProtocol {
     private(set) var currentDate: Date = Date()
     private var searchText: String = ""
     private var visibleCategories: [TrackerCategory] = []
+    private var completedTrackers: [TrackerRecord] = []
     
     // MARK: - Init
     
@@ -27,6 +28,7 @@ final class TrackersPresenter: TrackersPresenterProtocol {
         self.recordStore = recordStore
         self.trackerStore.delegate = self
         self.recordStore.delegate = self
+        self.completedTrackers = recordStore.fetchAllRecords()
     }
     
     // MARK: - TrackersPresenterProtocol
@@ -54,7 +56,11 @@ final class TrackersPresenter: TrackersPresenterProtocol {
     
     func didTapTrackerAction(at indexPath: IndexPath) {
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.item]
-        if recordStore.isCompleted(trackerId: tracker.id, on: currentDate) {
+        let calendar = Calendar.current
+        let isCompleted = completedTrackers.contains { record in
+            record.trackerId == tracker.id && calendar.isDate(record.date, inSameDayAs: currentDate)
+        }
+        if isCompleted {
             recordStore.removeRecord(trackerId: tracker.id, on: currentDate)
         } else {
             recordStore.addRecord(trackerId: tracker.id, date: currentDate)
@@ -81,11 +87,14 @@ final class TrackersPresenter: TrackersPresenterProtocol {
     
     func isTrackerCompleted(at indexPath: IndexPath) -> Bool {
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.item]
-        return recordStore.isCompleted(trackerId: tracker.id, on: currentDate)
+        let calendar = Calendar.current
+        return completedTrackers.contains { record in
+            record.trackerId == tracker.id && calendar.isDate(record.date, inSameDayAs: currentDate)
+        }
     }
     
     func completedCount(for trackerId: UUID) -> Int {
-        recordStore.recordsCount(for: trackerId)
+        completedTrackers.filter { $0.trackerId == trackerId }.count
     }
     
     func isActionButtonEnabled() -> Bool {
@@ -142,6 +151,7 @@ extension TrackersPresenter: TrackerStoreDelegate {
 
 extension TrackersPresenter: TrackerRecordStoreDelegate {
     func trackerRecordStore(_ store: TrackerRecordStore, didUpdate update: StoreUpdate) {
+        completedTrackers = recordStore.fetchAllRecords()
         view?.reloadTrackers()
     }
 }

@@ -6,49 +6,30 @@
 //
 
 import CoreData
-import UIKit
 
 protocol TrackerCategoryStoreDelegate: AnyObject {
     func trackerCategoryStore(_ store: TrackerCategoryStore, didUpdate update: StoreUpdate)
 }
 
-final class TrackerCategoryStore: NSObject {
-    
-    // MARK: - Properties
+final class TrackerCategoryStore: BaseStore<TrackerCategoryCoreData> {
     
     weak var delegate: TrackerCategoryStoreDelegate?
     
-    private let context: NSManagedObjectContext
-    
-    private var insertedIndexes: [IndexPath] = []
-    private var deletedIndexes: [IndexPath] = []
-    private var updatedIndexes: [IndexPath] = []
-    private var movedIndexes: Set<StoreUpdate.Move> = []
-    
-    private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData> = {
+    init(context: NSManagedObjectContext) {
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         request.sortDescriptors = [
             NSSortDescriptor(key: "title", ascending: true)
         ]
-        let controller = NSFetchedResultsController(
+        super.init(
+            context: context,
             fetchRequest: request,
-            managedObjectContext: context,
-            sectionNameKeyPath: nil,
-            cacheName: nil
+            sectionNameKeyPath: nil
         )
-        controller.delegate = self
-        return controller
-    }()
-    
-    // MARK: - Init
-    
-    init(context: NSManagedObjectContext) {
-        self.context = context
-        super.init()
-        try? fetchedResultsController.performFetch()
     }
     
-    // MARK: - Public API
+    override func storeDidChange(_ update: StoreUpdate) {
+        delegate?.trackerCategoryStore(self, didUpdate: update)
+    }
     
     func findOrCreate(titled title: String) throws -> TrackerCategoryCoreData {
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
@@ -59,53 +40,7 @@ final class TrackerCategoryStore: NSObject {
         }
         let category = TrackerCategoryCoreData(context: context)
         category.title = title
+        try context.save()
         return category
-    }
-}
-
-// MARK: - NSFetchedResultsControllerDelegate
-
-extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
-    
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        insertedIndexes = []
-        deletedIndexes = []
-        updatedIndexes = []
-        movedIndexes = []
-    }
-    
-    func controller(
-        _ controller: NSFetchedResultsController<NSFetchRequestResult>,
-        didChange anObject: Any,
-        at indexPath: IndexPath?,
-        for type: NSFetchedResultsChangeType,
-        newIndexPath: IndexPath?
-    ) {
-        switch type {
-        case .insert:
-            if let newIndexPath { insertedIndexes.append(newIndexPath) }
-        case .delete:
-            if let indexPath { deletedIndexes.append(indexPath) }
-        case .update:
-            if let indexPath { updatedIndexes.append(indexPath) }
-        case .move:
-            if let indexPath, let newIndexPath {
-                movedIndexes.insert(StoreUpdate.Move(oldIndex: indexPath.item, newIndex: newIndexPath.item))
-            }
-        @unknown default:
-            break
-        }
-    }
-    
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        let update = StoreUpdate(
-            insertedIndexes: IndexSet(insertedIndexes.map { $0.item }),
-            deletedIndexes: IndexSet(deletedIndexes.map { $0.item }),
-            updatedIndexes: IndexSet(updatedIndexes.map { $0.item }),
-            movedIndexes: movedIndexes,
-            insertedSections: IndexSet(),
-            deletedSections: IndexSet()
-        )
-        delegate?.trackerCategoryStore(self, didUpdate: update)
     }
 }

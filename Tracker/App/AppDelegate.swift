@@ -10,16 +10,17 @@ import CoreData
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+    
     let coreDataStack = CoreDataStack()
-
+    
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         WeekdayValueTransformer.register()
+        UIColorValueTransformer.register()
         _ = coreDataStack.persistentContainer
         return true
     }
-
+    
     func applicationWillTerminate(_ application: UIApplication) {
         coreDataStack.saveContext()
     }
