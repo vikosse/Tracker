@@ -8,13 +8,13 @@
 import UIKit
 
 final class ColorCell: UICollectionViewCell {
-
+    
     // MARK: - Properties
-
+    
     static let reuseIdentifier = "ColorCell"
-
+    
     // MARK: - UI Elements
-
+    
     private let colorView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 8
@@ -22,16 +22,16 @@ final class ColorCell: UICollectionViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-
+    
     // MARK: - Init
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.layer.cornerRadius = 8
         contentView.layer.masksToBounds = true
         contentView.layer.borderWidth = 0
         contentView.addSubview(colorView)
-
+        
         NSLayoutConstraint.activate([
             colorView.widthAnchor.constraint(equalToConstant: 40),
             colorView.heightAnchor.constraint(equalToConstant: 40),
@@ -39,13 +39,13 @@ final class ColorCell: UICollectionViewCell {
             colorView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     // MARK: - Configure
-
+    
     func configure(color: UIColor, isSelected: Bool) {
         colorView.backgroundColor = color
         if isSelected {

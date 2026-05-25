@@ -13,14 +13,21 @@ final class TrackersPresenter: TrackersPresenterProtocol {
     
     weak var view: TrackersViewProtocol?
     
-    private var allCategories: [TrackerCategory] = [
-        TrackerCategory(title: TrackerConstants.defaultCategoryTitle, trackers: [])
-    ]
+    private let trackerStore: TrackerStore
+    private let recordStore: TrackerRecordStore
     
-    private var completedTrackers: [TrackerRecord] = []
     private(set) var currentDate: Date = Date()
     private var searchText: String = ""
     private var visibleCategories: [TrackerCategory] = []
+    
+    // MARK: - Init
+    
+    init(trackerStore: TrackerStore, recordStore: TrackerRecordStore) {
+        self.trackerStore = trackerStore
+        self.recordStore = recordStore
+        self.trackerStore.delegate = self
+        self.recordStore.delegate = self
+    }
     
     // MARK: - TrackersPresenterProtocol
     
@@ -47,20 +54,11 @@ final class TrackersPresenter: TrackersPresenterProtocol {
     
     func didTapTrackerAction(at indexPath: IndexPath) {
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.item]
-        let calendar = Calendar.current
-        let isAlreadyCompleted = completedTrackers.contains { record in
-            record.trackerId == tracker.id
-            && calendar.isDate(record.date, inSameDayAs: currentDate)
-        }
-        if isAlreadyCompleted {
-            completedTrackers.removeAll { record in
-                record.trackerId == tracker.id
-                && calendar.isDate(record.date, inSameDayAs: currentDate)
-            }
+        if recordStore.isCompleted(trackerId: tracker.id, on: currentDate) {
+            recordStore.removeRecord(trackerId: tracker.id, on: currentDate)
         } else {
-            completedTrackers.append(TrackerRecord(trackerId: tracker.id, date: currentDate))
+            recordStore.addRecord(trackerId: tracker.id, date: currentDate)
         }
-        view?.reloadTrackers()
     }
     
     // MARK: - Data source
@@ -83,14 +81,11 @@ final class TrackersPresenter: TrackersPresenterProtocol {
     
     func isTrackerCompleted(at indexPath: IndexPath) -> Bool {
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.item]
-        return completedTrackers.contains { record in
-            record.trackerId == tracker.id
-            && Calendar.current.isDate(record.date, inSameDayAs: currentDate)
-        }
+        return recordStore.isCompleted(trackerId: tracker.id, on: currentDate)
     }
     
     func completedCount(for trackerId: UUID) -> Int {
-        completedTrackers.filter { $0.trackerId == trackerId }.count
+        recordStore.recordsCount(for: trackerId)
     }
     
     func isActionButtonEnabled() -> Bool {
@@ -101,24 +96,13 @@ final class TrackersPresenter: TrackersPresenterProtocol {
     // MARK: - Adding new trackers
     
     func addTracker(_ tracker: Tracker, toCategoryTitled categoryTitle: String) {
-        if let index = allCategories.firstIndex(where: { $0.title == categoryTitle }) {
-            let category = allCategories[index]
-            let updated = TrackerCategory(
-                title: category.title,
-                trackers: category.trackers + [tracker]
-            )
-            allCategories[index] = updated
-        } else {
-            let newCategory = TrackerCategory(title: categoryTitle, trackers: [tracker])
-            allCategories.append(newCategory)
-        }
-        recomputeVisibleCategories()
-        updatePlaceholderAndReload()
+        trackerStore.addTracker(tracker, toCategoryTitled: categoryTitle)
     }
     
     // MARK: - Private helpers
     
     private func recomputeVisibleCategories() {
+        let allCategories = trackerStore.fetchAllCategories()
         guard let currentWeekday = Weekday(date: currentDate) else {
             visibleCategories = []
             return
@@ -141,6 +125,23 @@ final class TrackersPresenter: TrackersPresenterProtocol {
         } else {
             view?.hidePlaceholder()
         }
+        view?.reloadTrackers()
+    }
+}
+
+// MARK: - TrackerStoreDelegate
+
+extension TrackersPresenter: TrackerStoreDelegate {
+    func trackerStore(_ store: TrackerStore, didUpdate update: StoreUpdate) {
+        recomputeVisibleCategories()
+        updatePlaceholderAndReload()
+    }
+}
+
+// MARK: - TrackerRecordStoreDelegate
+
+extension TrackersPresenter: TrackerRecordStoreDelegate {
+    func trackerRecordStore(_ store: TrackerRecordStore, didUpdate update: StoreUpdate) {
         view?.reloadTrackers()
     }
 }

@@ -13,12 +13,12 @@ protocol EmojiColorPickerViewDelegate: AnyObject {
 }
 
 final class EmojiColorPickerView: UIView {
-
+    
     // MARK: - Nested Types
-
+    
     private enum Section: Int, CaseIterable {
         case emoji, color
-
+        
         var title: String {
             switch self {
             case .emoji: return "Emoji"
@@ -26,21 +26,21 @@ final class EmojiColorPickerView: UIView {
             }
         }
     }
-
+    
     // MARK: - Properties
-
+    
     weak var delegate: EmojiColorPickerViewDelegate?
-
+    
     var selectedEmojiIndex: Int? {
         didSet { refreshSelection(in: .emoji, oldIndex: oldValue, newIndex: selectedEmojiIndex) }
     }
-
+    
     var selectedColorIndex: Int? {
         didSet { refreshSelection(in: .color, oldIndex: oldValue, newIndex: selectedColorIndex) }
     }
-
+    
     // MARK: - UI Elements
-
+    
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: 52, height: 52)
@@ -48,7 +48,7 @@ final class EmojiColorPickerView: UIView {
         layout.minimumLineSpacing = 0
         layout.headerReferenceSize = CGSize(width: 0, height: 50)
         layout.sectionInset = UIEdgeInsets(top: 0, left: 18, bottom: 24, right: 18)
-
+        
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
         view.backgroundColor = .clear
         view.dataSource = self
@@ -64,9 +64,9 @@ final class EmojiColorPickerView: UIView {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-
+    
     // MARK: - Init
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(collectionView)
@@ -77,13 +77,13 @@ final class EmojiColorPickerView: UIView {
             collectionView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     // MARK: - Selection refresh
-
+    
     private func refreshSelection(in section: Section, oldIndex: Int?, newIndex: Int?) {
         if let old = oldIndex, old != newIndex {
             configureCell(at: IndexPath(item: old, section: section.rawValue), isSelected: false)
@@ -92,7 +92,7 @@ final class EmojiColorPickerView: UIView {
             configureCell(at: IndexPath(item: new, section: section.rawValue), isSelected: true)
         }
     }
-
+    
     private func configureCell(at indexPath: IndexPath, isSelected: Bool) {
         guard let section = Section(rawValue: indexPath.section) else { return }
         switch section {
@@ -110,14 +110,14 @@ final class EmojiColorPickerView: UIView {
             )
         }
     }
-
+    
     // MARK: - Intrinsic Size
-
+    
     override var intrinsicContentSize: CGSize {
         collectionView.layoutIfNeeded()
         return CGSize(width: UIView.noIntrinsicMetric, height: collectionView.contentSize.height)
     }
-
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         if bounds.height != collectionView.contentSize.height {
@@ -129,11 +129,11 @@ final class EmojiColorPickerView: UIView {
 // MARK: - UICollectionViewDataSource
 
 extension EmojiColorPickerView: UICollectionViewDataSource {
-
+    
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         Section.allCases.count
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         guard let section = Section(rawValue: section) else { return 0 }
         switch section {
@@ -141,7 +141,7 @@ extension EmojiColorPickerView: UICollectionViewDataSource {
         case .color: return TrackerConstants.availableColors.count
         }
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let section = Section(rawValue: indexPath.section) else {
             return UICollectionViewCell()
@@ -169,7 +169,7 @@ extension EmojiColorPickerView: UICollectionViewDataSource {
             return cell
         }
     }
-
+    
     func collectionView(
         _ collectionView: UICollectionView,
         viewForSupplementaryElementOfKind kind: String,
@@ -192,7 +192,7 @@ extension EmojiColorPickerView: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegate
 
 extension EmojiColorPickerView: UICollectionViewDelegate {
-
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let section = Section(rawValue: indexPath.section) else { return }
         switch section {
