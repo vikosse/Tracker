@@ -58,7 +58,7 @@ final class MainTabBarController: UITabBarController {
     }
     
     private func makeTrackersTab() -> UINavigationController {
-        let trackerStore = TrackerStore(categoryStore: TrackerCategoryStore())
+        let trackerStore = TrackerStore()
         let recordStore = TrackerRecordStore()
         
         let viewController = TrackersViewController()

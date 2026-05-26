@@ -16,10 +16,7 @@ final class TrackerStore: BaseStore<TrackerCoreData> {
     
     weak var delegate: TrackerStoreDelegate?
     
-    private let categoryStore: TrackerCategoryStore
-    
-    init(categoryStore: TrackerCategoryStore) {
-        self.categoryStore = categoryStore
+    init() {
         let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
         request.sortDescriptors = [
             NSSortDescriptor(key: "category.title", ascending: true),
@@ -37,7 +34,18 @@ final class TrackerStore: BaseStore<TrackerCoreData> {
     
     func addTracker(_ tracker: Tracker, toCategoryTitled categoryTitle: String) {
         do {
-            let category = try categoryStore.findOrCreate(titled: categoryTitle)
+            let categoryRequest = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+            categoryRequest.predicate = NSPredicate(format: "title == %@", categoryTitle)
+            categoryRequest.fetchLimit = 1
+            
+            let category: TrackerCategoryCoreData
+            if let existing = try context.fetch(categoryRequest).first {
+                category = existing
+            } else {
+                category = TrackerCategoryCoreData(context: context)
+                category.title = categoryTitle
+            }
+            
             let coreData = TrackerCoreData(context: context)
             coreData.id = tracker.id
             coreData.name = tracker.name
