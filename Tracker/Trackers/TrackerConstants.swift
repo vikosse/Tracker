@@ -9,7 +9,7 @@ import UIKit
 
 enum TrackerConstants {
     
-    static let TrackerCreationTitle = "Создание трекера"
+    static let trackerCreationTitle = "Создание трекера"
     static let habitButtonTitle = "Привычка"
     static let irregularEventButtonTitle = "Нерегулярное событие"
     

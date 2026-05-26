@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import CoreData
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,7 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         WeekdayValueTransformer.register()
         UIColorValueTransformer.register()
-        _ = coreDataStack.persistentContainer
+        coreDataStack.bootstrap()
         return true
     }
     

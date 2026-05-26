@@ -9,7 +9,7 @@ import CoreData
 
 final class CoreDataStack {
     
-    lazy var persistentContainer: NSPersistentContainer = {
+    private lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "TrackerDataModel")
         container.loadPersistentStores { _, error in
             if let error = error as NSError? {
@@ -19,8 +19,12 @@ final class CoreDataStack {
         return container
     }()
     
-    var viewContext: NSManagedObjectContext {
+    private var viewContext: NSManagedObjectContext {
         persistentContainer.viewContext
+    }
+    
+    func bootstrap() {
+        _ = persistentContainer
     }
     
     func saveContext() {
@@ -32,5 +36,19 @@ final class CoreDataStack {
             let nserror = error as NSError
             assertionFailure("Failed to save context: \(nserror), \(nserror.userInfo)")
         }
+    }
+    
+    // MARK: - Store factories
+    
+    func makeTrackerCategoryStore() -> TrackerCategoryStore {
+        TrackerCategoryStore(context: viewContext)
+    }
+    
+    func makeTrackerStore(categoryStore: TrackerCategoryStore) -> TrackerStore {
+        TrackerStore(context: viewContext, categoryStore: categoryStore)
+    }
+    
+    func makeTrackerRecordStore() -> TrackerRecordStore {
+        TrackerRecordStore(context: viewContext)
     }
 }

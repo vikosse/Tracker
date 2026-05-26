@@ -37,29 +37,46 @@ final class TrackerRecordStore: BaseStore<TrackerRecordCoreData> {
         record.id = UUID()
         record.date = date
         record.tracker = trackerCoreData
-        try? context.save()
+        do {
+            try context.save()
+        } catch {
+            print("TrackerRecordStore.addRecord failed: \(error)")
+        }
     }
     
     func removeRecord(trackerId: UUID, on date: Date) {
         let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
         request.predicate = sameDayPredicate(trackerId: trackerId, date: date)
-        guard let records = try? context.fetch(request) else { return }
-        records.forEach { context.delete($0) }
-        try? context.save()
+        do {
+            let records = try context.fetch(request)
+            records.forEach { context.delete($0) }
+            try context.save()
+        } catch {
+            print("TrackerRecordStore.removeRecord failed: \(error)")
+        }
     }
     
     func isCompleted(trackerId: UUID, on date: Date) -> Bool {
         let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
         request.predicate = sameDayPredicate(trackerId: trackerId, date: date)
         request.fetchLimit = 1
-        let count = (try? context.count(for: request)) ?? 0
-        return count > 0
+        do {
+            return try context.count(for: request) > 0
+        } catch {
+            print("TrackerRecordStore.isCompleted failed: \(error)")
+            return false
+        }
     }
     
     func recordsCount(for trackerId: UUID) -> Int {
         let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
         request.predicate = NSPredicate(format: "tracker.id == %@", trackerId as CVarArg)
-        return (try? context.count(for: request)) ?? 0
+        do {
+            return try context.count(for: request)
+        } catch {
+            print("TrackerRecordStore.recordsCount failed: \(error)")
+            return 0
+        }
     }
     
     func fetchAllRecords() -> [TrackerRecord] {
@@ -79,7 +96,12 @@ final class TrackerRecordStore: BaseStore<TrackerRecordCoreData> {
         let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
         request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
         request.fetchLimit = 1
-        return (try? context.fetch(request))?.first
+        do {
+            return try context.fetch(request).first
+        } catch {
+            print("TrackerRecordStore.fetchTrackerCoreData failed: \(error)")
+            return nil
+        }
     }
     
     private func sameDayPredicate(trackerId: UUID, date: Date) -> NSPredicate {

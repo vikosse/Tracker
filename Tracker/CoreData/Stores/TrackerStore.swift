@@ -37,15 +37,19 @@ final class TrackerStore: BaseStore<TrackerCoreData> {
     }
     
     func addTracker(_ tracker: Tracker, toCategoryTitled categoryTitle: String) {
-        guard let category = try? categoryStore.findOrCreate(titled: categoryTitle) else { return }
-        let coreData = TrackerCoreData(context: context)
-        coreData.id = tracker.id
-        coreData.name = tracker.name
-        coreData.emoji = tracker.emoji
-        coreData.color = tracker.color
-        coreData.schedule = Array(tracker.schedule) as NSObject
-        coreData.category = category
-        try? context.save()
+        do {
+            let category = try categoryStore.findOrCreate(titled: categoryTitle)
+            let coreData = TrackerCoreData(context: context)
+            coreData.id = tracker.id
+            coreData.name = tracker.name
+            coreData.emoji = tracker.emoji
+            coreData.color = tracker.color
+            coreData.schedule = Array(tracker.schedule) as NSObject
+            coreData.category = category
+            try context.save()
+        } catch {
+            print("TrackerStore.addTracker failed: \(error)")
+        }
     }
     
     func fetchAllCategories() -> [TrackerCategory] {

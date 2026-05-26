@@ -34,7 +34,11 @@ class BaseStore<Entity: NSManagedObject>: NSObject, NSFetchedResultsControllerDe
         )
         super.init()
         self.fetchedResultsController.delegate = self
-        try? self.fetchedResultsController.performFetch()
+        do {
+            try self.fetchedResultsController.performFetch()
+        } catch {
+            print("BaseStore.performFetch failed: \(error)")
+        }
     }
     
     func storeDidChange(_ update: StoreUpdate) {}

@@ -20,8 +20,9 @@ final class MainTabBarController: UITabBarController {
         super.init(nibName: nil, bundle: nil)
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
     
     // MARK: - Nested Types
@@ -73,11 +74,11 @@ final class MainTabBarController: UITabBarController {
     }
     
     private func makeTrackersTab() -> UINavigationController {
-        
-        let categoryStore = TrackerCategoryStore(context: coreDataStack.viewContext)
-        let trackerStore = TrackerStore(context: coreDataStack.viewContext, categoryStore: categoryStore)
-        let recordStore = TrackerRecordStore(context: coreDataStack.viewContext)
-        
+
+        let categoryStore = coreDataStack.makeTrackerCategoryStore()
+        let trackerStore = coreDataStack.makeTrackerStore(categoryStore: categoryStore)
+        let recordStore = coreDataStack.makeTrackerRecordStore()
+
         let viewController = TrackersViewController()
         let presenter = TrackersPresenter(trackerStore: trackerStore, recordStore: recordStore)
         
