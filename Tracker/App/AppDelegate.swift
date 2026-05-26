@@ -10,21 +10,14 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
-    let coreDataStack = CoreDataStack()
-    
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         WeekdayValueTransformer.register()
         UIColorValueTransformer.register()
-        coreDataStack.bootstrap()
         return true
     }
     
-    func applicationWillTerminate(_ application: UIApplication) {
-        coreDataStack.saveContext()
-    }
-    
-    // MARK: UISceneSession Lifecycle
+    // MARK: - UISceneSession Lifecycle
     
     func application(_ application: UIApplication,
                      configurationForConnecting connectingSceneSession: UISceneSession,

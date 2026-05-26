@@ -21,10 +21,10 @@ class BaseStore<Entity: NSManagedObject>: NSObject, NSFetchedResultsControllerDe
     private var deletedSections: IndexSet = []
     
     init(
-        context: NSManagedObjectContext,
         fetchRequest: NSFetchRequest<Entity>,
         sectionNameKeyPath: String?
     ) {
+        let context = CoreDataStack.shared.viewContext
         self.context = context
         self.fetchedResultsController = NSFetchedResultsController(
             fetchRequest: fetchRequest,

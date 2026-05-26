@@ -15,13 +15,12 @@ final class TrackerCategoryStore: BaseStore<TrackerCategoryCoreData> {
     
     weak var delegate: TrackerCategoryStoreDelegate?
     
-    init(context: NSManagedObjectContext) {
+    init() {
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         request.sortDescriptors = [
             NSSortDescriptor(key: "title", ascending: true)
         ]
         super.init(
-            context: context,
             fetchRequest: request,
             sectionNameKeyPath: nil
         )

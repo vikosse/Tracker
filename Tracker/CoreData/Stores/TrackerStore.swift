@@ -18,7 +18,7 @@ final class TrackerStore: BaseStore<TrackerCoreData> {
     
     private let categoryStore: TrackerCategoryStore
     
-    init(context: NSManagedObjectContext, categoryStore: TrackerCategoryStore) {
+    init(categoryStore: TrackerCategoryStore) {
         self.categoryStore = categoryStore
         let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
         request.sortDescriptors = [
@@ -26,7 +26,6 @@ final class TrackerStore: BaseStore<TrackerCoreData> {
             NSSortDescriptor(key: "name", ascending: true)
         ]
         super.init(
-            context: context,
             fetchRequest: request,
             sectionNameKeyPath: "category.title"
         )
