@@ -52,37 +52,33 @@ final class MainTabBarController: UITabBarController {
     // MARK: - Setup
     
     private func setupTabs() {
-        let trackersTab = makeTrackersTab()
-        let statisticsTab = makeStatisticsTab()
-        viewControllers = [trackersTab, statisticsTab]
+        let trackers = makeTrackersTab()
+        let statistics = makeStatisticsTab()
+        viewControllers = [trackers, statistics]
     }
     
     private func makeTrackersTab() -> UINavigationController {
+        let trackerStore = TrackerStore()
+        let recordStore = TrackerRecordStore()
         
         let viewController = TrackersViewController()
-        let presenter = TrackersPresenter()
-        
+        let presenter = TrackersPresenter(trackerStore: trackerStore, recordStore: recordStore)
         viewController.presenter = presenter
         presenter.view = viewController
         
         let navController = UINavigationController(rootViewController: viewController)
-        
         navController.tabBarItem = Tab.trackers.tabBarItem
-        
         return navController
     }
     
     private func makeStatisticsTab() -> UINavigationController {
         let viewController = StatisticsViewController()
         let presenter = StatisticsPresenter()
-        
         viewController.presenter = presenter
         presenter.view = viewController
         
         let navController = UINavigationController(rootViewController: viewController)
-        
         navController.tabBarItem = Tab.statistics.tabBarItem
-        
         return navController
     }
 }

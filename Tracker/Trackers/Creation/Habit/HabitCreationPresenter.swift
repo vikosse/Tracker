@@ -30,8 +30,8 @@ final class HabitCreationPresenter: BaseTrackerCreationPresenter {
         Tracker(
             id: UUID(),
             name: name.trimmingCharacters(in: .whitespacesAndNewlines),
-            color: TrackerConstants.randomColor(),
-            emoji: TrackerConstants.randomEmoji(),
+            color: chosenColor(),
+            emoji: chosenEmoji(),
             schedule: schedule
         )
     }
