@@ -20,6 +20,7 @@ protocol TrackerCreationViewProtocol: AnyObject {
     func reloadOptions()
     func setCreateButtonEnabled(_ isEnabled: Bool)
     func setNameError(_ message: String?)
+    func presentCategoryScreen(selectedCategory: String?)
 }
 
 // MARK: - Base Presenter
@@ -33,7 +34,7 @@ class BaseTrackerCreationPresenter {
 
     var name: String = ""
 
-    var categoryTitle: String = TrackerConstants.defaultCategoryTitle
+    var categoryTitle: String? = nil
 
     private(set) var selectedEmojiIndex: Int?
     private(set) var selectedColorIndex: Int?
@@ -52,7 +53,15 @@ class BaseTrackerCreationPresenter {
         view?.setCreateButtonEnabled(isCreateAllowed)
     }
 
-    func didTapCategoryRow() {}
+    func didTapCategoryRow() {
+        view?.presentCategoryScreen(selectedCategory: categoryTitle)
+    }
+
+    func didConfirmCategory(_ title: String) {
+        categoryTitle = title
+        view?.reloadOptions()
+        view?.setCreateButtonEnabled(isCreateAllowed)
+    }
 
     func didTapCancel() {
         delegate?.trackerCreationDidCancel()
@@ -60,7 +69,10 @@ class BaseTrackerCreationPresenter {
 
     func didTapCreate() {
         guard isCreateAllowed else { return }
-        delegate?.trackerCreationDidCreate(makeTracker(), inCategory: categoryTitle)
+        delegate?.trackerCreationDidCreate(
+            makeTracker(),
+            inCategory: categoryTitle ?? TrackerConstants.defaultCategoryTitle
+        )
     }
 
     func didSelectEmoji(at index: Int) {
@@ -112,6 +124,6 @@ class BaseTrackerCreationPresenter {
     }
 
     func subtitleForOptionRow(at index: Int) -> String? {
-        categoryTitle
+        return categoryTitle
     }
 }

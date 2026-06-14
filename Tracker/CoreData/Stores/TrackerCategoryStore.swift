@@ -18,7 +18,7 @@ final class TrackerCategoryStore: BaseStore<TrackerCategoryCoreData> {
     init() {
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         request.sortDescriptors = [
-            NSSortDescriptor(key: "title", ascending: true)
+            NSSortDescriptor(key: "createdAt", ascending: true)
         ]
         super.init(
             fetchRequest: request,
@@ -30,6 +30,10 @@ final class TrackerCategoryStore: BaseStore<TrackerCategoryCoreData> {
         delegate?.trackerCategoryStore(self, didUpdate: update)
     }
     
+    var categories: [TrackerCategoryCoreData] {
+        fetchedResultsController.fetchedObjects ?? []
+    }
+
     func findOrCreate(titled title: String) throws -> TrackerCategoryCoreData {
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         request.predicate = NSPredicate(format: "title == %@", title)
@@ -39,7 +43,25 @@ final class TrackerCategoryStore: BaseStore<TrackerCategoryCoreData> {
         }
         let category = TrackerCategoryCoreData(context: context)
         category.title = title
+        category.createdAt = Date()
         try context.save()
         return category
+    }
+
+    func hasTrackers(at index: Int) -> Bool {
+        guard index < categories.count else { return false }
+        return (categories[index].trackers?.count ?? 0) > 0
+    }
+
+    func rename(at index: Int, to newTitle: String) throws {
+        guard index < categories.count else { return }
+        categories[index].title = newTitle
+        try context.save()
+    }
+
+    func delete(at index: Int) throws {
+        guard index < categories.count else { return }
+        context.delete(categories[index])
+        try context.save()
     }
 }

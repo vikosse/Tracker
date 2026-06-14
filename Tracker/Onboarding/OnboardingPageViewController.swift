@@ -83,15 +83,26 @@ final class OnboardingPageViewController: UIViewController {
     }
 
     private func setupConstraints() {
-        NSLayoutConstraint.activate([
+        NSLayoutConstraint.activate(
+[
             backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
-            backgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            backgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            backgroundImageView.leadingAnchor
+                .constraint(equalTo: view.leadingAnchor),
+            backgroundImageView.trailingAnchor
+                .constraint(equalTo: view.trailingAnchor),
+            backgroundImageView.bottomAnchor
+                .constraint(equalTo: view.bottomAnchor),
 
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            titleLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -labelBottomOffset),
-        ])
+            titleLabel.leadingAnchor
+                .constraint(equalTo: view.leadingAnchor, constant: 16),
+            titleLabel.trailingAnchor
+                .constraint(equalTo: view.trailingAnchor, constant: -16),
+            titleLabel.bottomAnchor
+                .constraint(
+                    equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                    constant: -labelBottomOffset
+                ),
+]
+        )
     }
 }

@@ -17,7 +17,9 @@ final class OnboardingViewController: UIPageViewController {
         static let buttonBottomPadding: CGFloat = 50
         static let buttonHeight: CGFloat = 60
         static let labelButtonSpacing: CGFloat = 160
-        static var labelBottomOffset: CGFloat { buttonBottomPadding + buttonHeight + labelButtonSpacing }
+        static var labelBottomOffset: CGFloat {
+            buttonBottomPadding + buttonHeight + labelButtonSpacing
+        }
     }
 
     // MARK: - Pages
@@ -43,7 +45,12 @@ final class OnboardingViewController: UIPageViewController {
         btn.backgroundColor = .black
         btn.layer.cornerRadius = 16
         btn.layer.masksToBounds = true
-        btn.addTarget(self, action: #selector(actionButtonTapped), for: .touchUpInside)
+        btn
+            .addTarget(
+                self,
+                action: #selector(actionButtonTapped),
+                for: .touchUpInside
+            )
         btn.translatesAutoresizingMaskIntoConstraints = false
         return btn
     }()
@@ -68,7 +75,10 @@ final class OnboardingViewController: UIPageViewController {
 
     private func setupPages() {
         pages = OnboardingPageModel.pages.map {
-            OnboardingPageViewController(model: $0, labelBottomOffset: Layout.labelBottomOffset)
+            OnboardingPageViewController(
+                model: $0,
+                labelBottomOffset: Layout.labelBottomOffset
+            )
         }
         pageControl.numberOfPages = pages.count
         if let first = pages.first {
@@ -89,24 +99,37 @@ final class OnboardingViewController: UIPageViewController {
     }
 
     private func setupConstraints() {
-        NSLayoutConstraint.activate([
-            actionButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            actionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            actionButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Layout.buttonBottomPadding),
-            actionButton.heightAnchor.constraint(equalToConstant: Layout.buttonHeight),
+        NSLayoutConstraint.activate(
+[
+            actionButton.leadingAnchor
+                .constraint(equalTo: view.leadingAnchor, constant: 20),
+            actionButton.trailingAnchor
+                .constraint(equalTo: view.trailingAnchor, constant: -20),
+            actionButton.bottomAnchor
+                .constraint(
+                    equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                    constant: -Layout.buttonBottomPadding
+                ),
+            actionButton.heightAnchor
+                .constraint(equalToConstant: Layout.buttonHeight),
 
             pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            pageControl.bottomAnchor.constraint(equalTo: actionButton.topAnchor, constant: -24),
-        ])
+            pageControl.bottomAnchor
+                .constraint(equalTo: actionButton.topAnchor, constant: -24),
+]
+        )
     }
 
     // MARK: - Actions
 
     @objc private func actionButtonTapped() {
-        UserDefaults.standard.set(true, forKey: OnboardingViewController.onboardingCompletedKey)
+        UserDefaults.standard
+            .set(true, forKey: OnboardingViewController.onboardingCompletedKey)
 
         guard let windowScene = view.window?.windowScene,
-              let sceneDelegate = windowScene.delegate as? SceneDelegate else { return }
+              let sceneDelegate = windowScene.delegate as? SceneDelegate else {
+            return
+        }
 
         let tabBar = MainTabBarController()
         sceneDelegate.window?.rootViewController = tabBar
@@ -119,13 +142,17 @@ extension OnboardingViewController: UIPageViewControllerDataSource {
 
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let index = pages.firstIndex(of: viewController), index > 0 else { return nil }
+        guard let index = pages.firstIndex(of: viewController), index > 0 else {
+            return nil
+        }
         return pages[index - 1]
     }
 
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let index = pages.firstIndex(of: viewController), index < pages.count - 1 else { return nil }
+        guard let index = pages.firstIndex(of: viewController), index < pages.count - 1 else {
+            return nil
+        }
         return pages[index + 1]
     }
 }
