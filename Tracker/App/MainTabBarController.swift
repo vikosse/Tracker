@@ -47,6 +47,15 @@ final class MainTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTabs()
+        setupTabBarAppearance()
+    }
+
+    private func setupTabBarAppearance() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.shadowColor = .ypGray
+        tabBar.standardAppearance = appearance
+        tabBar.scrollEdgeAppearance = appearance
     }
     
     // MARK: - Setup
@@ -62,11 +71,16 @@ final class MainTabBarController: UITabBarController {
         let recordStore = TrackerRecordStore()
         
         let viewController = TrackersViewController()
-        let presenter = TrackersPresenter(trackerStore: trackerStore, recordStore: recordStore)
+        let presenter = TrackersPresenter(
+            trackerStore: trackerStore,
+            recordStore: recordStore
+        )
         viewController.presenter = presenter
         presenter.view = viewController
         
-        let navController = UINavigationController(rootViewController: viewController)
+        let navController = UINavigationController(
+            rootViewController: viewController
+        )
         navController.tabBarItem = Tab.trackers.tabBarItem
         return navController
     }
@@ -77,7 +91,9 @@ final class MainTabBarController: UITabBarController {
         viewController.presenter = presenter
         presenter.view = viewController
         
-        let navController = UINavigationController(rootViewController: viewController)
+        let navController = UINavigationController(
+            rootViewController: viewController
+        )
         navController.tabBarItem = Tab.statistics.tabBarItem
         return navController
     }

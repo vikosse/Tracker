@@ -13,6 +13,7 @@ final class CategoryViewModel {
 
     var onUpdate: (() -> Void)?
     var onCategorySelected: ((String) -> Void)?
+    var onError: ((String) -> Void)?
 
     // MARK: - State
 
@@ -41,7 +42,8 @@ final class CategoryViewModel {
     // MARK: - Data
 
     func categoryTitle(at index: Int) -> String {
-        store.categories[index].title ?? ""
+        guard store.categories.indices.contains(index) else { return "" }
+        return store.categories[index].title ?? ""
     }
 
     func isSelected(at index: Int) -> Bool {
@@ -61,15 +63,27 @@ final class CategoryViewModel {
     }
 
     func addCategory(titled title: String) {
-        try? store.findOrCreate(titled: title)
+        do {
+            try store.findOrCreate(titled: title)
+        } catch {
+            onError?("Не удалось сохранить категорию")
+        }
     }
 
     func renameCategory(at index: Int, to newTitle: String) {
-        try? store.rename(at: index, to: newTitle)
+        do {
+            try store.rename(at: index, to: newTitle)
+        } catch {
+            onError?("Не удалось переименовать категорию")
+        }
     }
 
     func deleteCategory(at index: Int) {
-        try? store.delete(at: index)
+        do {
+            try store.delete(at: index)
+        } catch {
+            onError?("Не удалось удалить категорию")
+        }
     }
 
     // MARK: - Private

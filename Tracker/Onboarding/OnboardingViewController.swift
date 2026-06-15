@@ -13,6 +13,10 @@ final class OnboardingViewController: UIPageViewController {
 
     static let onboardingCompletedKey = "isOnboardingCompleted"
 
+    // MARK: - Callbacks
+
+    var onFinish: (() -> Void)?
+
     private enum Layout {
         static let buttonBottomPadding: CGFloat = 50
         static let buttonHeight: CGFloat = 60
@@ -100,23 +104,24 @@ final class OnboardingViewController: UIPageViewController {
 
     private func setupConstraints() {
         NSLayoutConstraint.activate(
-[
-            actionButton.leadingAnchor
-                .constraint(equalTo: view.leadingAnchor, constant: 20),
-            actionButton.trailingAnchor
-                .constraint(equalTo: view.trailingAnchor, constant: -20),
-            actionButton.bottomAnchor
-                .constraint(
-                    equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-                    constant: -Layout.buttonBottomPadding
-                ),
-            actionButton.heightAnchor
-                .constraint(equalToConstant: Layout.buttonHeight),
+            [
+                actionButton.leadingAnchor
+                    .constraint(equalTo: view.leadingAnchor, constant: 20),
+                actionButton.trailingAnchor
+                    .constraint(equalTo: view.trailingAnchor, constant: -20),
+                actionButton.bottomAnchor
+                    .constraint(
+                        equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                        constant: -Layout.buttonBottomPadding
+                    ),
+                actionButton.heightAnchor
+                    .constraint(equalToConstant: Layout.buttonHeight),
 
-            pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            pageControl.bottomAnchor
-                .constraint(equalTo: actionButton.topAnchor, constant: -24),
-]
+                pageControl.centerXAnchor
+                    .constraint(equalTo: view.centerXAnchor),
+                pageControl.bottomAnchor
+                    .constraint(equalTo: actionButton.topAnchor, constant: -24),
+            ]
         )
     }
 
@@ -125,14 +130,7 @@ final class OnboardingViewController: UIPageViewController {
     @objc private func actionButtonTapped() {
         UserDefaults.standard
             .set(true, forKey: OnboardingViewController.onboardingCompletedKey)
-
-        guard let windowScene = view.window?.windowScene,
-              let sceneDelegate = windowScene.delegate as? SceneDelegate else {
-            return
-        }
-
-        let tabBar = MainTabBarController()
-        sceneDelegate.window?.rootViewController = tabBar
+        onFinish?()
     }
 }
 

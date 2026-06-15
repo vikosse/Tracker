@@ -12,12 +12,26 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
     
     
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+    func scene(
+        _ scene: UIScene,
+        willConnectTo session: UISceneSession,
+        options connectionOptions: UIScene.ConnectionOptions
+    ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
 
-        let isOnboardingCompleted = UserDefaults.standard.bool(forKey: OnboardingViewController.onboardingCompletedKey)
-        window.rootViewController = isOnboardingCompleted ? MainTabBarController() : OnboardingViewController()
+        let isOnboardingCompleted = UserDefaults.standard.bool(
+            forKey: OnboardingViewController.onboardingCompletedKey
+        )
+        if isOnboardingCompleted {
+            window.rootViewController = MainTabBarController()
+        } else {
+            let onboarding = OnboardingViewController()
+            onboarding.onFinish = { [weak window] in
+                window?.rootViewController = MainTabBarController()
+            }
+            window.rootViewController = onboarding
+        }
 
         self.window = window
         window.makeKeyAndVisible()

@@ -9,6 +9,12 @@ import UIKit
 
 final class CategoryCell: UITableViewCell {
 
+    // MARK: - Types
+
+    enum Position {
+        case single, first, middle, last
+    }
+
     // MARK: - Constants
 
     static let reuseIdentifier = "CategoryCell"
@@ -42,24 +48,30 @@ final class CategoryCell: UITableViewCell {
         contentView.addSubview(checkmarkImageView)
 
         NSLayoutConstraint.activate(
-[
-            titleLabel.leadingAnchor
-                .constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            titleLabel.trailingAnchor
-                .constraint(
-                    lessThanOrEqualTo: checkmarkImageView.leadingAnchor,
-                    constant: -8
-                ),
-            titleLabel.centerYAnchor
-                .constraint(equalTo: contentView.centerYAnchor),
+            [
+                titleLabel.leadingAnchor
+                    .constraint(
+                        equalTo: contentView.leadingAnchor,
+                        constant: 16
+                    ),
+                titleLabel.trailingAnchor
+                    .constraint(
+                        lessThanOrEqualTo: checkmarkImageView.leadingAnchor,
+                        constant: -8
+                    ),
+                titleLabel.centerYAnchor
+                    .constraint(equalTo: contentView.centerYAnchor),
 
-            checkmarkImageView.trailingAnchor
-                .constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            checkmarkImageView.centerYAnchor
-                .constraint(equalTo: contentView.centerYAnchor),
-            checkmarkImageView.widthAnchor.constraint(equalToConstant: 24),
-            checkmarkImageView.heightAnchor.constraint(equalToConstant: 24),
-]
+                checkmarkImageView.trailingAnchor
+                    .constraint(
+                        equalTo: contentView.trailingAnchor,
+                        constant: -16
+                    ),
+                checkmarkImageView.centerYAnchor
+                    .constraint(equalTo: contentView.centerYAnchor),
+                checkmarkImageView.widthAnchor.constraint(equalToConstant: 24),
+                checkmarkImageView.heightAnchor.constraint(equalToConstant: 24),
+            ]
         )
     }
 
@@ -67,8 +79,32 @@ final class CategoryCell: UITableViewCell {
 
     // MARK: - Configure
 
-    func configure(title: String, isSelected: Bool) {
+    func configure(title: String, isSelected: Bool, position: Position) {
         titleLabel.text = title
         checkmarkImageView.isHidden = !isSelected
+        applyCorners(for: position)
+    }
+
+    // MARK: - Private
+
+    private func applyCorners(for position: Position) {
+        layer.masksToBounds = true
+        switch position {
+        case .single:
+            layer.cornerRadius = 16
+            layer.maskedCorners = [
+                .layerMinXMinYCorner, .layerMaxXMinYCorner,
+                .layerMinXMaxYCorner, .layerMaxXMaxYCorner
+            ]
+        case .first:
+            layer.cornerRadius = 16
+            layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        case .last:
+            layer.cornerRadius = 16
+            layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        case .middle:
+            layer.cornerRadius = 0
+            layer.maskedCorners = []
+        }
     }
 }

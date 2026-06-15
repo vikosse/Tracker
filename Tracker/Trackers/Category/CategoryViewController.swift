@@ -105,42 +105,44 @@ final class CategoryViewController: UIViewController {
 
     private func setupConstraints() {
         NSLayoutConstraint.activate(
-[
-            titleLabel.topAnchor
-                .constraint(
-                    equalTo: view.safeAreaLayoutGuide.topAnchor,
-                    constant: 27
-                ),
-            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            [
+                titleLabel.topAnchor
+                    .constraint(
+                        equalTo: view.safeAreaLayoutGuide.topAnchor,
+                        constant: 27
+                    ),
+                titleLabel.centerXAnchor
+                    .constraint(equalTo: view.centerXAnchor),
 
-            tableContainer.topAnchor
-                .constraint(equalTo: titleLabel.bottomAnchor, constant: 38),
-            tableContainer.leadingAnchor
-                .constraint(equalTo: view.leadingAnchor, constant: 16),
-            tableContainer.trailingAnchor
-                .constraint(equalTo: view.trailingAnchor, constant: -16),
-            tableContainer.bottomAnchor
-                .constraint(equalTo: addButton.topAnchor, constant: -24),
+                tableContainer.topAnchor
+                    .constraint(equalTo: titleLabel.bottomAnchor, constant: 38),
+                tableContainer.leadingAnchor
+                    .constraint(equalTo: view.leadingAnchor, constant: 16),
+                tableContainer.trailingAnchor
+                    .constraint(equalTo: view.trailingAnchor, constant: -16),
+                tableContainer.bottomAnchor
+                    .constraint(equalTo: addButton.topAnchor, constant: -24),
 
-            tableView.topAnchor.constraint(equalTo: tableContainer.topAnchor),
-            tableView.leadingAnchor
-                .constraint(equalTo: tableContainer.leadingAnchor),
-            tableView.trailingAnchor
-                .constraint(equalTo: tableContainer.trailingAnchor),
-            tableView.bottomAnchor
-                .constraint(equalTo: tableContainer.bottomAnchor),
+                tableView.topAnchor
+                    .constraint(equalTo: tableContainer.topAnchor),
+                tableView.leadingAnchor
+                    .constraint(equalTo: tableContainer.leadingAnchor),
+                tableView.trailingAnchor
+                    .constraint(equalTo: tableContainer.trailingAnchor),
+                tableView.bottomAnchor
+                    .constraint(equalTo: tableContainer.bottomAnchor),
 
-            addButton.leadingAnchor
-                .constraint(equalTo: view.leadingAnchor, constant: 20),
-            addButton.trailingAnchor
-                .constraint(equalTo: view.trailingAnchor, constant: -20),
-            addButton.bottomAnchor
-                .constraint(
-                    equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-                    constant: -16
-                ),
-            addButton.heightAnchor.constraint(equalToConstant: 60),
-]
+                addButton.leadingAnchor
+                    .constraint(equalTo: view.leadingAnchor, constant: 20),
+                addButton.trailingAnchor
+                    .constraint(equalTo: view.trailingAnchor, constant: -20),
+                addButton.bottomAnchor
+                    .constraint(
+                        equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                        constant: -16
+                    ),
+                addButton.heightAnchor.constraint(equalToConstant: 60),
+            ]
         )
     }
 
@@ -204,36 +206,20 @@ extension CategoryViewController: UITableViewDataSource {
             for: indexPath
         ) as? CategoryCell else { return UITableViewCell() }
 
-        cell.configure(
-            title: viewModel.categoryTitle(at: indexPath.row),
-            isSelected: viewModel.isSelected(at: indexPath.row)
-        )
-
         let isFirst = indexPath.row == 0
         let isLast = indexPath.row == viewModel.numberOfCategories - 1
-
-        cell.layer.cornerRadius = 16
-        cell.layer.masksToBounds = true
-        switch (isFirst, isLast) {
-        case (true, true):
-            cell.layer.maskedCorners = [
-                .layerMinXMinYCorner, .layerMaxXMinYCorner,
-                .layerMinXMaxYCorner, .layerMaxXMaxYCorner
-            ]
-        case (true, false):
-            cell.layer.maskedCorners = [
-                .layerMinXMinYCorner,
-                .layerMaxXMinYCorner
-            ]
-        case (false, true):
-            cell.layer.maskedCorners = [
-                .layerMinXMaxYCorner,
-                .layerMaxXMaxYCorner
-            ]
-        case (false, false):
-            cell.layer.cornerRadius = 0
-            cell.layer.maskedCorners = []
+        let position: CategoryCell.Position = switch (isFirst, isLast) {
+        case (true, true): .single
+        case (true, false): .first
+        case (false, true): .last
+        default: .middle
         }
+
+        cell.configure(
+            title: viewModel.categoryTitle(at: indexPath.row),
+            isSelected: viewModel.isSelected(at: indexPath.row),
+            position: position
+        )
 
         cell.separatorInset = isLast
         ? UIEdgeInsets(
