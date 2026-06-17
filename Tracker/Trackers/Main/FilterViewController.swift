@@ -107,7 +107,7 @@ extension FilterViewController: UITableViewDataSource {
         let isLast = indexPath.row == TrackerFilter.allCases.count - 1
         cell.configure(
             title: filter.title,
-            isSelected: filter == currentFilter,
+            isSelected: filter == currentFilter && filter != .all && filter != .today,
             isFirst: isFirst,
             isLast: isLast
         )
