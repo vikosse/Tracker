@@ -25,7 +25,9 @@ final class NewCategoryViewController: UIViewController {
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = existingTitle == nil ? "Новая категория" : "Редактирование категории"
+        label.text = existingTitle == nil
+            ? NSLocalizedString("new_category_title", comment: "Заголовок экрана новой категории")
+            : NSLocalizedString("edit_category_title", comment: "Заголовок экрана редактирования категории")
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = .ypBlack
         label.textAlignment = .center
@@ -43,7 +45,7 @@ final class NewCategoryViewController: UIViewController {
 
     private lazy var nameTextField: UITextField = {
         let field = UITextField()
-        field.placeholder = "Введите название категории"
+        field.placeholder = NSLocalizedString("category_name_placeholder", comment: "Placeholder поля названия категории")
         field.font = .systemFont(ofSize: 17)
         field.clearButtonMode = .whileEditing
         field.returnKeyType = .done

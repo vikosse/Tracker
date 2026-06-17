@@ -19,7 +19,7 @@ final class TrackersViewController: UIViewController {
         let picker = UIDatePicker()
         picker.preferredDatePickerStyle = .compact
         picker.datePickerMode = .date
-        picker.locale = Locale(identifier: "ru_RU")
+        picker.locale = TrackerConstants.supportedLocale
         picker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
         
         picker.translatesAutoresizingMaskIntoConstraints = false

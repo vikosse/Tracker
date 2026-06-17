@@ -18,9 +18,9 @@ final class MainTabBarController: UITabBarController {
         var title: String {
             switch self {
             case .trackers:
-                return "Трекеры"
+                return NSLocalizedString("trackers_title", comment: "Вкладка трекеров")
             case .statistics:
-                return "Статистика"
+                return NSLocalizedString("statistics_title", comment: "Вкладка статистики")
             }
         }
         

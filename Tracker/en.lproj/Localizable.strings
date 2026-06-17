@@ -1,0 +1,69 @@
+/* Tabs */
+"trackers_title" = "Trackers";
+"statistics_title" = "Statistics";
+
+/* Tracker Type Selection */
+"tracker_creation_title" = "Create tracker";
+"habit_button_title" = "Habit";
+"irregular_event_button_title" = "Irregular event";
+
+/* Habit / Irregular Event Creation */
+"new_habit_title" = "New habit";
+"new_irregular_event_title" = "New irregular event";
+"new_habit_placeholder" = "Enter tracker name";
+"tracker_name_limit_error" = "Limit of %d characters";
+
+/* Options */
+"category_title" = "Category";
+"schedule_title" = "Schedule";
+"default_category_title" = "Important";
+
+/* Buttons */
+"cancel_button_title" = "Cancel";
+"create_button_title" = "Create";
+"done_button_title" = "Done";
+
+/* Trackers Screen */
+"search_placeholder" = "Search";
+"empty_trackers_title" = "What will we track?";
+
+/* Category Screen */
+"add_category_button_title" = "Add category";
+"delete_category_alert_title" = "Are you sure you don't need this category?";
+"delete_category_alert_message" = "All trackers in this category will be deleted";
+"delete_action_title" = "Delete";
+"edit_action_title" = "Edit";
+
+/* New / Edit Category */
+"new_category_title" = "New category";
+"edit_category_title" = "Edit category";
+"category_name_placeholder" = "Enter category name";
+
+/* Emoji / Color Picker */
+"color_section_title" = "Color";
+
+/* Schedule */
+"every_day" = "Every day";
+
+/* Weekday short names */
+"weekday_short_monday" = "Mon";
+"weekday_short_tuesday" = "Tue";
+"weekday_short_wednesday" = "Wed";
+"weekday_short_thursday" = "Thu";
+"weekday_short_friday" = "Fri";
+"weekday_short_saturday" = "Sat";
+"weekday_short_sunday" = "Sun";
+
+/* Weekday full names */
+"weekday_full_monday" = "Monday";
+"weekday_full_tuesday" = "Tuesday";
+"weekday_full_wednesday" = "Wednesday";
+"weekday_full_thursday" = "Thursday";
+"weekday_full_friday" = "Friday";
+"weekday_full_saturday" = "Saturday";
+"weekday_full_sunday" = "Sunday";
+
+/* Onboarding */
+"onboarding_page1_title" = "Track only what you want";
+"onboarding_page2_title" = "Even if it's not\nliters of water and yoga";
+"onboarding_action_button_title" = "That's technology!";

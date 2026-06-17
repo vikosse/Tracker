@@ -15,8 +15,8 @@ struct OnboardingPageModel {
 extension OnboardingPageModel {
 
     private enum Strings {
-        static let firstPageTitle = "Отслеживайте только то, что хотите"
-        static let secondPageTitle = "Даже если это\nне литры воды и йога"
+        static var firstPageTitle: String { NSLocalizedString("onboarding_page1_title", comment: "Текст первой страницы онбординга") }
+        static var secondPageTitle: String { NSLocalizedString("onboarding_page2_title", comment: "Текст второй страницы онбординга") }
     }
 
     static let pages: [OnboardingPageModel] = [

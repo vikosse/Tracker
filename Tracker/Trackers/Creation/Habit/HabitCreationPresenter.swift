@@ -70,7 +70,7 @@ final class HabitCreationPresenter: BaseTrackerCreationPresenter {
     
     private func formattedSchedule() -> String? {
         if schedule.isEmpty { return nil }
-        if schedule.count == Weekday.allCases.count { return "Каждый день" }
+        if schedule.count == Weekday.allCases.count { return NSLocalizedString("every_day", comment: "Расписание 'Каждый день'") }
         let selectedDays: [Weekday] = Weekday.allCases.filter { schedule.contains($0) }
         let shortNames: [String] = selectedDays.map { $0.shortName }
         return shortNames.joined(separator: ", ")

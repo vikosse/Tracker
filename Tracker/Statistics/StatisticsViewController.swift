@@ -18,7 +18,7 @@ final class StatisticsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
-        navigationItem.title = "Статистика"
+        navigationItem.title = NSLocalizedString("statistics_title", comment: "Заголовок экрана статистики")
         
         presenter?.viewDidLoad()
     }

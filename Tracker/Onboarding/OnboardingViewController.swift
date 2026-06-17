@@ -43,7 +43,7 @@ final class OnboardingViewController: UIPageViewController {
 
     private lazy var actionButton: UIButton = {
         let btn = UIButton(type: .system)
-        btn.setTitle("Вот это технологии!", for: .normal)
+        btn.setTitle(NSLocalizedString("onboarding_action_button_title", comment: "Кнопка закрытия онбординга"), for: .normal)
         btn.setTitleColor(.white, for: .normal)
         btn.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         btn.backgroundColor = .black

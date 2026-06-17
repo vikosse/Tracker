@@ -173,21 +173,8 @@ final class TrackerCell: UICollectionViewCell {
     }
     
     // MARK: - Pluralization
-    
+
     static func pluralDays(_ count: Int) -> String {
-        let absolute = abs(count)
-        let mod100 = absolute % 100
-        let mod10 = absolute % 10
-        let word: String
-        if mod100 >= 11 && mod100 <= 14 {
-            word = "дней"
-        } else {
-            switch mod10 {
-            case 1: word = "день"
-            case 2, 3, 4: word = "дня"
-            default: word = "дней"
-            }
-        }
-        return "\(count) \(word)"
+        String(format: NSLocalizedString("tracker_completed_days", comment: "Количество дней выполнения трекера"), count)
     }
 }

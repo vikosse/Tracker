@@ -370,7 +370,7 @@ extension IrregularEventCreationViewController: UITextFieldDelegate {
         
         if newText.count > TrackerConstants.trackerNameMaxLength {
             setNameError(
-                "Ограничение \(TrackerConstants.trackerNameMaxLength) символов"
+                String(format: NSLocalizedString("tracker_name_limit_error", comment: "Ошибка превышения длины названия трекера"), TrackerConstants.trackerNameMaxLength)
             )
             return false
         } else {
