@@ -18,9 +18,15 @@ final class MainTabBarController: UITabBarController {
         var title: String {
             switch self {
             case .trackers:
-                return NSLocalizedString("trackers_title", comment: "Вкладка трекеров")
+                return NSLocalizedString(
+                    "trackers_title",
+                    comment: "Вкладка трекеров"
+                )
             case .statistics:
-                return NSLocalizedString("statistics_title", comment: "Вкладка статистики")
+                return NSLocalizedString(
+                    "statistics_title",
+                    comment: "Вкладка статистики"
+                )
             }
         }
         
@@ -86,11 +92,17 @@ final class MainTabBarController: UITabBarController {
     }
     
     private func makeStatisticsTab() -> UINavigationController {
+        let trackerStore = TrackerStore()
+        let recordStore = TrackerRecordStore()
+
         let viewController = StatisticsViewController()
-        let presenter = StatisticsPresenter()
+        let presenter = StatisticsPresenter(
+            trackerStore: trackerStore,
+            recordStore: recordStore
+        )
         viewController.presenter = presenter
         presenter.view = viewController
-        
+
         let navController = UINavigationController(
             rootViewController: viewController
         )

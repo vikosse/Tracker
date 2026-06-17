@@ -74,7 +74,14 @@
 "filter_incomplete" = "Incomplete";
 "filter_not_found_title" = "Nothing found";
 
+/* Statistics Screen */
+"statistics_empty_title" = "Nothing to analyze yet";
+"stat_best_period" = "Best period";
+"stat_perfect_days" = "Perfect days";
+"stat_trackers_completed" = "Trackers completed";
+"stat_average_value" = "Average value";
+
 /* Onboarding */
 "onboarding_page1_title" = "Track only what you want";
 "onboarding_page2_title" = "Even if it's not\nliters of water and yoga";
-"onboarding_action_button_title" = "That's technology!";
+"onboarding_action_button_title" = "That's cool!";
