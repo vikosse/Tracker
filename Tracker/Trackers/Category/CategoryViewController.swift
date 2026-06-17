@@ -45,7 +45,8 @@ final class CategoryViewController: UIViewController {
             bottom: 0,
             right: 16
         )
-        table.rowHeight = 75
+        table.rowHeight = UITableView.automaticDimension
+        table.estimatedRowHeight = 75
         table.dataSource = self
         table.delegate = self
         table
@@ -59,7 +60,14 @@ final class CategoryViewController: UIViewController {
 
     private lazy var addButton: UIButton = {
         let btn = UIButton(type: .system)
-        btn.setTitle(NSLocalizedString("add_category_button_title", comment: "Кнопка добавления категории"), for: .normal)
+        btn
+            .setTitle(
+                NSLocalizedString(
+                    "add_category_button_title",
+                    comment: "Кнопка добавления категории"
+                ),
+                for: .normal
+            )
         btn.setTitleColor(.ypWhite, for: .normal)
         btn.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         btn.backgroundColor = .ypBlack
@@ -178,8 +186,14 @@ final class CategoryViewController: UIViewController {
     private func showDeleteConfirmation(at index: Int) {
         let hasTrackers = viewModel.hasTrackers(at: index)
         let alert = UIAlertController(
-            title: NSLocalizedString("delete_category_alert_title", comment: "Заголовок алерта удаления категории"),
-            message: hasTrackers ? NSLocalizedString("delete_category_alert_message", comment: "Сообщение алерта удаления категории с трекерами") : nil,
+            title: NSLocalizedString(
+                "delete_category_alert_title",
+                comment: "Заголовок алерта удаления категории"
+            ),
+            message: hasTrackers ? NSLocalizedString(
+                "delete_category_alert_message",
+                comment: "Сообщение алерта удаления категории с трекерами"
+            ) : nil,
             preferredStyle: .actionSheet
         )
         alert
@@ -187,7 +201,16 @@ final class CategoryViewController: UIViewController {
                 UIAlertAction(title: NSLocalizedString("delete_action_title", comment: "Действие удаления"), style: .destructive) { [weak self] _ in
                     self?.viewModel.deleteCategory(at: index)
                 })
-        alert.addAction(UIAlertAction(title: NSLocalizedString("cancel_button_title", comment: "Действие отмены"), style: .cancel))
+        alert
+            .addAction(
+                UIAlertAction(
+                    title: NSLocalizedString(
+                        "cancel_button_title",
+                        comment: "Действие отмены"
+                    ),
+                    style: .cancel
+                )
+            )
         present(alert, animated: true)
     }
 }

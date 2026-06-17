@@ -25,6 +25,7 @@ final class CategoryCell: UITableViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 17, weight: .regular)
         label.textColor = .ypBlack
+        label.numberOfLines = 2
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -59,8 +60,20 @@ final class CategoryCell: UITableViewCell {
                         lessThanOrEqualTo: checkmarkImageView.leadingAnchor,
                         constant: -8
                     ),
+                titleLabel.topAnchor
+                    .constraint(
+                        greaterThanOrEqualTo: contentView.topAnchor,
+                        constant: 14
+                    ),
+                titleLabel.bottomAnchor
+                    .constraint(
+                        lessThanOrEqualTo: contentView.bottomAnchor,
+                        constant: -14
+                    ),
                 titleLabel.centerYAnchor
                     .constraint(equalTo: contentView.centerYAnchor),
+                contentView.heightAnchor
+                    .constraint(greaterThanOrEqualToConstant: 75),
 
                 checkmarkImageView.trailingAnchor
                     .constraint(

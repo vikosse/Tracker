@@ -63,6 +63,17 @@
 "weekday_full_saturday" = "Saturday";
 "weekday_full_sunday" = "Sunday";
 
+/* Tracker Cell */
+"tracker_completed_days" = "%d days";
+
+/* Filters */
+"filter_title" = "Filters";
+"filter_all" = "All trackers";
+"filter_today" = "Trackers for today";
+"filter_completed" = "Completed";
+"filter_incomplete" = "Incomplete";
+"filter_not_found_title" = "Nothing found";
+
 /* Onboarding */
 "onboarding_page1_title" = "Track only what you want";
 "onboarding_page2_title" = "Even if it's not\nliters of water and yoga";

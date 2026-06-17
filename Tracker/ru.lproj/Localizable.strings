@@ -63,6 +63,17 @@
 "weekday_full_saturday" = "Суббота";
 "weekday_full_sunday" = "Воскресенье";
 
+/* Tracker Cell */
+"tracker_completed_days" = "%d дней";
+
+/* Filters */
+"filter_title" = "Фильтры";
+"filter_all" = "Все трекеры";
+"filter_today" = "Трекеры на сегодня";
+"filter_completed" = "Завершённые";
+"filter_incomplete" = "Не завершённые";
+"filter_not_found_title" = "Ничего не найдено";
+
 /* Onboarding */
 "onboarding_page1_title" = "Отслеживайте только то, что хотите";
 "onboarding_page2_title" = "Даже если это\nне литры воды и йога";
