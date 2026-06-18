@@ -96,7 +96,12 @@ final class TrackerCell: UICollectionViewCell {
         super.init(frame: frame)
         contentView.backgroundColor = .clear
         setupLayout()
-        actionButton.addTarget(self, action: #selector(actionButtonTapped), for: .touchUpInside)
+        actionButton
+            .addTarget(
+                self,
+                action: #selector(actionButtonTapped),
+                for: .touchUpInside
+            )
     }
     
     @available(*, unavailable)
@@ -119,40 +124,59 @@ final class TrackerCell: UICollectionViewCell {
         
         NSLayoutConstraint.activate([
             colorView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            colorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            colorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            colorView.leadingAnchor
+                .constraint(equalTo: contentView.leadingAnchor),
+            colorView.trailingAnchor
+                .constraint(equalTo: contentView.trailingAnchor),
             colorView.heightAnchor.constraint(equalToConstant: 90),
             
-            emojiBackgroundView.topAnchor.constraint(equalTo: colorView.topAnchor, constant: 12),
-            emojiBackgroundView.leadingAnchor.constraint(equalTo: colorView.leadingAnchor, constant: 12),
+            emojiBackgroundView.topAnchor
+                .constraint(equalTo: colorView.topAnchor, constant: 12),
+            emojiBackgroundView.leadingAnchor
+                .constraint(equalTo: colorView.leadingAnchor, constant: 12),
             emojiBackgroundView.widthAnchor.constraint(equalToConstant: 24),
             emojiBackgroundView.heightAnchor.constraint(equalToConstant: 24),
             
-            emojiLabel.centerXAnchor.constraint(equalTo: emojiBackgroundView.centerXAnchor),
-            emojiLabel.centerYAnchor.constraint(equalTo: emojiBackgroundView.centerYAnchor),
+            emojiLabel.centerXAnchor
+                .constraint(equalTo: emojiBackgroundView.centerXAnchor),
+            emojiLabel.centerYAnchor
+                .constraint(equalTo: emojiBackgroundView.centerYAnchor),
             
-            nameLabel.leadingAnchor.constraint(equalTo: colorView.leadingAnchor, constant: 12),
-            nameLabel.trailingAnchor.constraint(equalTo: colorView.trailingAnchor, constant: -12),
-            nameLabel.bottomAnchor.constraint(equalTo: colorView.bottomAnchor, constant: -12),
+            nameLabel.leadingAnchor
+                .constraint(equalTo: colorView.leadingAnchor, constant: 12),
+            nameLabel.trailingAnchor
+                .constraint(equalTo: colorView.trailingAnchor, constant: -12),
+            nameLabel.bottomAnchor
+                .constraint(equalTo: colorView.bottomAnchor, constant: -12),
             nameLabel.topAnchor.constraint(
                 greaterThanOrEqualTo: emojiBackgroundView.bottomAnchor,
                 constant: 8
             ),
             
-            counterLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
-            counterLabel.centerYAnchor.constraint(equalTo: actionButton.centerYAnchor),
+            counterLabel.leadingAnchor
+                .constraint(equalTo: contentView.leadingAnchor, constant: 12),
+            counterLabel.centerYAnchor
+                .constraint(equalTo: actionButton.centerYAnchor),
             
-            actionButton.topAnchor.constraint(equalTo: colorView.bottomAnchor, constant: 8),
-            actionButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            actionButton.topAnchor
+                .constraint(equalTo: colorView.bottomAnchor, constant: 8),
+            actionButton.trailingAnchor
+                .constraint(equalTo: contentView.trailingAnchor, constant: -12),
             actionButton.widthAnchor.constraint(equalToConstant: 34),
             actionButton.heightAnchor.constraint(equalToConstant: 34),
-            actionButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            actionButton.bottomAnchor
+                .constraint(equalTo: contentView.bottomAnchor)
         ])
     }
     
     // MARK: - Configure
     
-    func configure(with tracker: Tracker, isCompleted: Bool, completedCount: Int, isButtonEnabled: Bool) {
+    func configure(
+        with tracker: Tracker,
+        isCompleted: Bool,
+        completedCount: Int,
+        isButtonEnabled: Bool
+    ) {
         emojiLabel.text = tracker.emoji
         colorView.backgroundColor = tracker.color
         nameLabel.text = tracker.name
@@ -162,7 +186,14 @@ final class TrackerCell: UICollectionViewCell {
         
         let state: ActionIcon = isCompleted ? .completed : .notCompleted
         let config = UIImage.SymbolConfiguration(pointSize: 12, weight: .bold)
-        actionButton.setImage(UIImage(systemName: state.symbolName, withConfiguration: config), for: .normal)
+        actionButton
+            .setImage(
+                UIImage(
+                    systemName: state.symbolName,
+                    withConfiguration: config
+                ),
+                for: .normal
+            )
         
         actionButton.isEnabled = isButtonEnabled
         actionButton.alpha = (isCompleted || !isButtonEnabled) ? 0.3 : 1.0
@@ -172,9 +203,19 @@ final class TrackerCell: UICollectionViewCell {
         delegate?.didTapActionButton(in: self)
     }
     
+    // MARK: - Context Menu Preview
+
+    var cardView: UIView { colorView }
+
     // MARK: - Pluralization
 
     static func pluralDays(_ count: Int) -> String {
-        String(format: NSLocalizedString("tracker_completed_days", comment: "Количество дней выполнения трекера"), count)
+        String(
+            format: NSLocalizedString(
+                "tracker_completed_days",
+                comment: "Количество дней выполнения трекера"
+            ),
+            count
+        )
     }
 }

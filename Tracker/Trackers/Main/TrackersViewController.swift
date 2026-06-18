@@ -19,7 +19,7 @@ final class TrackersViewController: UIViewController {
         let picker = UIDatePicker()
         picker.preferredDatePickerStyle = .compact
         picker.datePickerMode = .date
-        picker.locale = TrackerConstants.supportedLocale
+        picker.locale = Locale(identifier: "ru_RU")
         picker
             .addTarget(
                 self,
@@ -28,7 +28,7 @@ final class TrackersViewController: UIViewController {
             )
 
         picker.translatesAutoresizingMaskIntoConstraints = false
-        picker.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        picker.widthAnchor.constraint(equalToConstant: 120).isActive = true
 
         return picker
     }()
@@ -553,11 +553,45 @@ extension TrackersViewController: UICollectionViewDelegate {
             self?.presenter?.deleteTracker(at: indexPath)
         }
         return UIContextMenuConfiguration(
-            identifier: nil,
+            identifier: indexPath as NSIndexPath,
             previewProvider: nil
         ) { _ in
             UIMenu(title: "", children: [editAction, deleteAction])
         }
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration
+    ) -> UITargetedPreview? {
+        makeCardTargetedPreview(for: configuration, in: collectionView)
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration
+    ) -> UITargetedPreview? {
+        makeCardTargetedPreview(for: configuration, in: collectionView)
+    }
+
+    private func makeCardTargetedPreview(
+        for configuration: UIContextMenuConfiguration,
+        in collectionView: UICollectionView
+    ) -> UITargetedPreview? {
+        guard
+            let indexPath = configuration.identifier as? NSIndexPath,
+            let cell = collectionView.cellForItem(
+                at: indexPath as IndexPath
+            ) as? TrackerCell
+        else { return nil }
+
+        let parameters = UIPreviewParameters()
+        parameters.backgroundColor = cell.cardView.backgroundColor ?? .clear
+        parameters.visiblePath = UIBezierPath(
+            roundedRect: cell.cardView.bounds,
+            cornerRadius: 16
+        )
+        return UITargetedPreview(view: cell.cardView, parameters: parameters)
     }
 }
 
