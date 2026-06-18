@@ -10,6 +10,8 @@
 /* Habit / Irregular Event Creation */
 "new_habit_title" = "Новая привычка";
 "new_irregular_event_title" = "Новое нерегулярное событие";
+"edit_habit_title" = "Редактирование привычки";
+"edit_irregular_event_title" = "Редактирование нерегулярного события";
 "new_habit_placeholder" = "Введите название трекера";
 "tracker_name_limit_error" = "Ограничение %d символов";
 
@@ -22,6 +24,8 @@
 "cancel_button_title" = "Отменить";
 "create_button_title" = "Создать";
 "done_button_title" = "Готово";
+"save_button_title" = "Сохранить";
+"delete_tracker_confirmation" = "Уверены, что хотите удалить трекер?";
 
 /* Trackers Screen */
 "search_placeholder" = "Поиск";

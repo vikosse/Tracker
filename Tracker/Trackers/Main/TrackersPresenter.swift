@@ -118,13 +118,36 @@ final class TrackersPresenter: TrackersPresenterProtocol {
             .isDate(currentDate, inSameDayAs: Date()) || currentDate < Date()
     }
 
-    // MARK: - Adding new trackers
+    // MARK: - Adding / Editing / Deleting trackers
 
     func addTracker(
         _ tracker: Tracker,
         toCategoryTitled categoryTitle: String
     ) {
         trackerStore.addTracker(tracker, toCategoryTitled: categoryTitle)
+    }
+
+    func updateTracker(_ tracker: Tracker, inCategory categoryTitle: String) {
+        trackerStore.updateTracker(tracker, inCategory: categoryTitle)
+    }
+
+    func deleteTracker(at indexPath: IndexPath) {
+        let tracker = visibleCategories[indexPath.section].trackers[indexPath.item]
+        view?.showDeleteConfirmation { [weak self] in
+            self?.trackerStore.deleteTracker(id: tracker.id)
+        }
+    }
+
+    func editTracker(at indexPath: IndexPath) {
+        let tracker = visibleCategories[indexPath.section].trackers[indexPath.item]
+        let categoryTitle = visibleCategories[indexPath.section].title
+        let days = completedCount(for: tracker.id)
+        view?
+            .presentTrackerEdit(
+                tracker: tracker,
+                categoryTitle: categoryTitle,
+                completedDays: days
+            )
     }
 
     // MARK: - Private helpers

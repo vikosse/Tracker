@@ -17,7 +17,9 @@ final class TrackerStore: BaseStore<TrackerCoreData> {
     weak var delegate: TrackerStoreDelegate?
     
     init() {
-        let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
+        let request = NSFetchRequest<TrackerCoreData>(
+            entityName: "TrackerCoreData"
+        )
         request.sortDescriptors = [
             NSSortDescriptor(key: "category.title", ascending: true),
             NSSortDescriptor(key: "name", ascending: true)
@@ -32,10 +34,18 @@ final class TrackerStore: BaseStore<TrackerCoreData> {
         delegate?.trackerStore(self, didUpdate: update)
     }
     
-    func addTracker(_ tracker: Tracker, toCategoryTitled categoryTitle: String) {
+    func addTracker(
+        _ tracker: Tracker,
+        toCategoryTitled categoryTitle: String
+    ) {
         do {
-            let categoryRequest = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
-            categoryRequest.predicate = NSPredicate(format: "title == %@", categoryTitle)
+            let categoryRequest = NSFetchRequest<TrackerCategoryCoreData>(
+                entityName: "TrackerCategoryCoreData"
+            )
+            categoryRequest.predicate = NSPredicate(
+                format: "title == %@",
+                categoryTitle
+            )
             categoryRequest.fetchLimit = 1
             
             let category: TrackerCategoryCoreData
@@ -59,10 +69,83 @@ final class TrackerStore: BaseStore<TrackerCoreData> {
         }
     }
     
+    func deleteTracker(id: UUID) {
+        let request = NSFetchRequest<TrackerCoreData>(
+            entityName: "TrackerCoreData"
+        )
+        request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        request.fetchLimit = 1
+        do {
+            guard let coreData = try context.fetch(request).first else {
+                return
+            }
+            let category = coreData.category
+            context.delete(coreData)
+            deleteIfEmpty(category: category)
+            try context.save()
+        } catch {
+            print("TrackerStore.deleteTracker failed: \(error)")
+        }
+    }
+
+    func updateTracker(_ tracker: Tracker, inCategory categoryTitle: String) {
+        let request = NSFetchRequest<TrackerCoreData>(
+            entityName: "TrackerCoreData"
+        )
+        request.predicate = NSPredicate(
+            format: "id == %@",
+            tracker.id as CVarArg
+        )
+        request.fetchLimit = 1
+        do {
+            guard let coreData = try context.fetch(request).first else {
+                return
+            }
+            coreData.name = tracker.name
+            coreData.emoji = tracker.emoji
+            coreData.color = tracker.color
+            coreData.schedule = Array(tracker.schedule) as NSObject
+            if coreData.category?.title != categoryTitle {
+                let oldCategory = coreData.category
+                let categoryRequest = NSFetchRequest<TrackerCategoryCoreData>(
+                    entityName: "TrackerCategoryCoreData"
+                )
+                categoryRequest.predicate = NSPredicate(
+                    format: "title == %@",
+                    categoryTitle
+                )
+                categoryRequest.fetchLimit = 1
+                let category: TrackerCategoryCoreData
+                if let existing = try context.fetch(categoryRequest).first {
+                    category = existing
+                } else {
+                    category = TrackerCategoryCoreData(context: context)
+                    category.title = categoryTitle
+                }
+                coreData.category = category
+                deleteIfEmpty(category: oldCategory)
+            }
+            try context.save()
+        } catch {
+            print("TrackerStore.updateTracker failed: \(error)")
+        }
+    }
+
+    private func deleteIfEmpty(category: TrackerCategoryCoreData?) {
+        guard let category,
+              (category.trackers?.count ?? 0) == 0
+        else { return }
+        context.delete(category)
+    }
+
     func fetchAllCategories() -> [TrackerCategory] {
-        guard let sections = fetchedResultsController.sections else { return [] }
+        guard let sections = fetchedResultsController.sections else {
+            return []
+        }
         return sections.compactMap { section in
-            guard let coreDataItems = section.objects as? [TrackerCoreData] else { return nil }
+            guard let coreDataItems = section.objects as? [TrackerCoreData] else {
+                return nil
+            }
             let trackers = coreDataItems.compactMap { tracker(from: $0) }
             return TrackerCategory(title: section.name, trackers: trackers)
         }

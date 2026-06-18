@@ -10,6 +10,8 @@
 /* Habit / Irregular Event Creation */
 "new_habit_title" = "New habit";
 "new_irregular_event_title" = "New irregular event";
+"edit_habit_title" = "Edit habit";
+"edit_irregular_event_title" = "Edit irregular event";
 "new_habit_placeholder" = "Enter tracker name";
 "tracker_name_limit_error" = "Limit of %d characters";
 
@@ -22,6 +24,8 @@
 "cancel_button_title" = "Cancel";
 "create_button_title" = "Create";
 "done_button_title" = "Done";
+"save_button_title" = "Save";
+"delete_tracker_confirmation" = "Are you sure you want to delete this tracker?";
 
 /* Trackers Screen */
 "search_placeholder" = "Search";

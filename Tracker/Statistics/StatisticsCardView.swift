@@ -58,7 +58,7 @@ final class StatisticsCardView: UIView {
     // MARK: - Private
 
     private func setupView() {
-        backgroundColor = .systemBackground
+        backgroundColor = .ypWhite
         layer.cornerRadius = 16
         layer.masksToBounds = false
 

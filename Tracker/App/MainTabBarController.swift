@@ -59,6 +59,7 @@ final class MainTabBarController: UITabBarController {
     private func setupTabBarAppearance() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .ypWhite
         appearance.shadowColor = .ypGray
         tabBar.standardAppearance = appearance
         tabBar.scrollEdgeAppearance = appearance

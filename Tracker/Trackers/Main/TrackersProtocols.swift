@@ -18,6 +18,8 @@ protocol TrackersViewProtocol: AnyObject {
     func showFilterButton()
     func hideFilterButton()
     func updateCurrentDate(_ date: Date)
+    func presentTrackerEdit(tracker: Tracker, categoryTitle: String, completedDays: Int)
+    func showDeleteConfirmation(onConfirm: @escaping () -> Void)
 }
 
 // MARK: - Presenter Protocol
@@ -50,7 +52,10 @@ protocol TrackersPresenterProtocol: AnyObject {
 
     var currentFilter: TrackerFilter { get }
 
-    // MARK: - Adding New Trackers
+    // MARK: - Adding / Editing / Deleting Trackers
 
     func addTracker(_ tracker: Tracker, toCategoryTitled categoryTitle: String)
+    func updateTracker(_ tracker: Tracker, inCategory categoryTitle: String)
+    func deleteTracker(at indexPath: IndexPath)
+    func editTracker(at indexPath: IndexPath)
 }

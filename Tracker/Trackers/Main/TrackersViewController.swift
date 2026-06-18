@@ -280,7 +280,6 @@ extension TrackersViewController: TrackerCellDelegate {
 extension TrackersViewController: TrackersViewProtocol {
     func showEmptyDayPlaceholder() {
         placeholderImageView.image = UIImage(resource: .trackersPlaceholder)
-        placeholderImageView.tintColor = .systemGray3
         placeholderLabel.text = TrackerConstants.emptyTrackerScreenTitle
         placeholderStackView.isHidden = false
         collectionView.isHidden = true
@@ -288,7 +287,6 @@ extension TrackersViewController: TrackersViewProtocol {
 
     func showNotFoundPlaceholder() {
         placeholderImageView.image = UIImage(resource: .notFoundPlaceholder)
-        placeholderImageView.tintColor = .systemGray3
         placeholderLabel.text = NSLocalizedString(
             "filter_not_found_title",
             comment: "Ничего не найдено"
@@ -323,6 +321,56 @@ extension TrackersViewController: TrackersViewProtocol {
 
     func updateCurrentDate(_ date: Date) {
         datePicker.date = date
+    }
+
+    func presentTrackerEdit(
+        tracker: Tracker,
+        categoryTitle: String,
+        completedDays: Int
+    ) {
+        let editVC: UIViewController
+        if tracker.schedule.isEmpty {
+            let vc = IrregularEventCreationViewController(
+                editingTracker: tracker,
+                categoryTitle: categoryTitle,
+                completedDays: completedDays
+            )
+            vc.delegate = self
+            editVC = vc
+        } else {
+            let vc = HabitCreationViewController(
+                editingTracker: tracker,
+                categoryTitle: categoryTitle,
+                completedDays: completedDays
+            )
+            vc.delegate = self
+            editVC = vc
+        }
+        editVC.modalPresentationStyle = .pageSheet
+        present(editVC, animated: true)
+    }
+
+    func showDeleteConfirmation(onConfirm: @escaping () -> Void) {
+        let alert = UIAlertController(
+            title: nil,
+            message: NSLocalizedString(
+                "delete_tracker_confirmation",
+                comment: "Подтверждение удаления трекера"
+            ),
+            preferredStyle: .actionSheet
+        )
+        alert.addAction(UIAlertAction(
+            title: NSLocalizedString(
+                "delete_action_title",
+                comment: "Удалить"
+            ),
+            style: .destructive
+        ) { _ in onConfirm() })
+        alert.addAction(UIAlertAction(
+            title: TrackerConstants.cancelButtonTitle,
+            style: .cancel
+        ))
+        present(alert, animated: true)
     }
 }
 
@@ -370,6 +418,15 @@ extension TrackersViewController: TrackerCreationDelegate {
         dismiss(animated: true) { [weak self] in
             self?.presenter?
                 .addTracker(tracker, toCategoryTitled: categoryTitle)
+        }
+    }
+
+    func trackerCreationDidUpdate(
+        _ tracker: Tracker,
+        inCategory categoryTitle: String
+    ) {
+        dismiss(animated: true) { [weak self] in
+            self?.presenter?.updateTracker(tracker, inCategory: categoryTitle)
         }
     }
 
@@ -459,6 +516,37 @@ extension TrackersViewController: UICollectionViewDataSource {
         ) ?? ""
         header.configure(with: title)
         return header
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+
+extension TrackersViewController: UICollectionViewDelegate {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        let editAction = UIAction(
+            title: NSLocalizedString(
+                "edit_action_title",
+                comment: "Редактировать"
+            )
+        ) { [weak self] _ in
+            self?.presenter?.editTracker(at: indexPath)
+        }
+        let deleteAction = UIAction(
+            title: NSLocalizedString("delete_action_title", comment: "Удалить"),
+            attributes: .destructive
+        ) { [weak self] _ in
+            self?.presenter?.deleteTracker(at: indexPath)
+        }
+        return UIContextMenuConfiguration(
+            identifier: nil,
+            previewProvider: nil
+        ) { _ in
+            UIMenu(title: "", children: [editAction, deleteAction])
+        }
     }
 }
 

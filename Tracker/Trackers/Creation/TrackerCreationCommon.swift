@@ -11,6 +11,7 @@ import UIKit
 
 protocol TrackerCreationDelegate: AnyObject {
     func trackerCreationDidCreate(_ tracker: Tracker, inCategory categoryTitle: String)
+    func trackerCreationDidUpdate(_ tracker: Tracker, inCategory categoryTitle: String)
     func trackerCreationDidCancel()
 }
 
@@ -33,11 +34,25 @@ class BaseTrackerCreationPresenter {
     weak var delegate: TrackerCreationDelegate?
 
     var name: String = ""
-
     var categoryTitle: String? = nil
 
     private(set) var selectedEmojiIndex: Int?
     private(set) var selectedColorIndex: Int?
+    private(set) var editingTracker: Tracker?
+
+    // MARK: - Init
+
+    init(editingTracker: Tracker? = nil, categoryTitle: String? = nil) {
+        self.editingTracker = editingTracker
+        self.categoryTitle = categoryTitle
+        if let tracker = editingTracker {
+            self.name = tracker.name
+            self.selectedEmojiIndex = TrackerConstants.availableEmojis
+                .firstIndex(of: tracker.emoji)
+            self.selectedColorIndex = TrackerConstants.availableColors
+                .firstIndex { $0.isEqual(tracker.color) }
+        }
+    }
 
     // MARK: - Lifecycle
 
@@ -69,10 +84,13 @@ class BaseTrackerCreationPresenter {
 
     func didTapCreate() {
         guard isCreateAllowed else { return }
-        delegate?.trackerCreationDidCreate(
-            makeTracker(),
-            inCategory: categoryTitle ?? TrackerConstants.defaultCategoryTitle
-        )
+        let tracker = makeTracker()
+        let category = categoryTitle ?? TrackerConstants.defaultCategoryTitle
+        if editingTracker != nil {
+            delegate?.trackerCreationDidUpdate(tracker, inCategory: category)
+        } else {
+            delegate?.trackerCreationDidCreate(tracker, inCategory: category)
+        }
     }
 
     func didSelectEmoji(at index: Int) {
@@ -91,7 +109,7 @@ class BaseTrackerCreationPresenter {
 
     func makeTracker() -> Tracker {
         Tracker(
-            id: UUID(),
+            id: editingTracker?.id ?? UUID(),
             name: name.trimmingCharacters(in: .whitespacesAndNewlines),
             color: chosenColor(),
             emoji: chosenEmoji(),
