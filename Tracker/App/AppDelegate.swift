@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AppMetricaCore
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -14,6 +15,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         WeekdayValueTransformer.register()
         UIColorValueTransformer.register()
+        if let configuration = AppMetricaConfiguration(
+            apiKey: "975b9548-f731-40e0-af31-c15e8947ce95"
+        ) {
+            AppMetrica.activate(with: configuration)
+        }
         return true
     }
     

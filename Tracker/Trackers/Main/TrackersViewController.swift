@@ -142,6 +142,12 @@ final class TrackersViewController: UIViewController {
         setupFilterButton()
 
         presenter?.viewDidLoad()
+        MainScreenAnalytics.open()
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        MainScreenAnalytics.close()
     }
 
     // MARK: - Setup
@@ -228,6 +234,7 @@ final class TrackersViewController: UIViewController {
     // MARK: - Actions
 
     @objc private func addButtonTapped() {
+        MainScreenAnalytics.tapAddTrack()
         presenter?.didTapAddButton()
     }
 
@@ -240,6 +247,7 @@ final class TrackersViewController: UIViewController {
     }
 
     @objc private func filterButtonTapped() {
+        MainScreenAnalytics.tapFilter()
         let filterVC = FilterViewController(
             currentFilter: presenter?.currentFilter ?? .all
         )
@@ -271,6 +279,7 @@ extension TrackersViewController: TrackerCellDelegate {
         guard let indexPath = collectionView.indexPath(for: cell) else {
             return
         }
+        MainScreenAnalytics.tapTrack()
         presenter?.didTapTrackerAction(at: indexPath)
     }
 }
@@ -533,12 +542,14 @@ extension TrackersViewController: UICollectionViewDelegate {
                 comment: "Редактировать"
             )
         ) { [weak self] _ in
+            MainScreenAnalytics.tapEdit()
             self?.presenter?.editTracker(at: indexPath)
         }
         let deleteAction = UIAction(
             title: NSLocalizedString("delete_action_title", comment: "Удалить"),
             attributes: .destructive
         ) { [weak self] _ in
+            MainScreenAnalytics.tapDelete()
             self?.presenter?.deleteTracker(at: indexPath)
         }
         return UIContextMenuConfiguration(
