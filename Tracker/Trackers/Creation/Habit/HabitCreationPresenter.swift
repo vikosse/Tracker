@@ -8,19 +8,33 @@
 import Foundation
 
 final class HabitCreationPresenter: BaseTrackerCreationPresenter {
-    
+
     // MARK: - Properties
-    
+
     private var schedule: Set<Weekday> = []
-    
-    private var habitView: HabitCreationViewProtocol? { view as? HabitCreationViewProtocol }
-    
+
+    private var habitView: HabitCreationViewProtocol? {
+        view as? HabitCreationViewProtocol
+    }
+
     private enum OptionRow: Int, CaseIterable {
         case category, schedule
     }
-    
+
+    // MARK: - Init
+
+    override init(
+        editingTracker: Tracker? = nil,
+        categoryTitle: String? = nil
+    ) {
+        super.init(editingTracker: editingTracker, categoryTitle: categoryTitle)
+        if let tracker = editingTracker {
+            self.schedule = tracker.schedule
+        }
+    }
+
     // MARK: - Overrides
-    
+
     override var isCreateAllowed: Bool {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         return !trimmedName.isEmpty && !schedule.isEmpty
@@ -28,7 +42,7 @@ final class HabitCreationPresenter: BaseTrackerCreationPresenter {
     
     override func makeTracker() -> Tracker {
         Tracker(
-            id: UUID(),
+            id: editingTracker?.id ?? UUID(),
             name: name.trimmingCharacters(in: .whitespacesAndNewlines),
             color: chosenColor(),
             emoji: chosenEmoji(),
@@ -70,8 +84,15 @@ final class HabitCreationPresenter: BaseTrackerCreationPresenter {
     
     private func formattedSchedule() -> String? {
         if schedule.isEmpty { return nil }
-        if schedule.count == Weekday.allCases.count { return "Каждый день" }
-        let selectedDays: [Weekday] = Weekday.allCases.filter { schedule.contains($0) }
+        if schedule.count == Weekday.allCases.count {
+            return NSLocalizedString(
+                "every_day",
+                comment: "Расписание 'Каждый день'"
+            )
+        }
+        let selectedDays: [Weekday] = Weekday.allCases.filter {
+            schedule.contains($0)
+        }
         let shortNames: [String] = selectedDays.map { $0.shortName }
         return shortNames.joined(separator: ", ")
     }

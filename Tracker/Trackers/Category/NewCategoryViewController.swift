@@ -25,7 +25,15 @@ final class NewCategoryViewController: UIViewController {
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = existingTitle == nil ? "Новая категория" : "Редактирование категории"
+        label.text = existingTitle == nil
+        ? NSLocalizedString(
+            "new_category_title",
+            comment: "Заголовок экрана новой категории"
+        )
+        : NSLocalizedString(
+            "edit_category_title",
+            comment: "Заголовок экрана редактирования категории"
+        )
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = .ypBlack
         label.textAlignment = .center
@@ -43,7 +51,10 @@ final class NewCategoryViewController: UIViewController {
 
     private lazy var nameTextField: UITextField = {
         let field = UITextField()
-        field.placeholder = "Введите название категории"
+        field.placeholder = NSLocalizedString(
+            "category_name_placeholder",
+            comment: "Placeholder поля названия категории"
+        )
         field.font = .systemFont(ofSize: 17)
         field.clearButtonMode = .whileEditing
         field.returnKeyType = .done
@@ -57,6 +68,16 @@ final class NewCategoryViewController: UIViewController {
             )
         field.translatesAutoresizingMaskIntoConstraints = false
         return field
+    }()
+
+    private lazy var errorLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 17)
+        label.textColor = .ypRed
+        label.textAlignment = .center
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
     }()
 
     private lazy var doneButton: UIButton = {
@@ -105,6 +126,7 @@ final class NewCategoryViewController: UIViewController {
         view.addSubview(titleLabel)
         view.addSubview(textFieldContainer)
         textFieldContainer.addSubview(nameTextField)
+        view.addSubview(errorLabel)
         view.addSubview(doneButton)
     }
 
@@ -126,6 +148,16 @@ final class NewCategoryViewController: UIViewController {
                 textFieldContainer.trailingAnchor
                     .constraint(equalTo: view.trailingAnchor, constant: -16),
                 textFieldContainer.heightAnchor.constraint(equalToConstant: 75),
+
+                errorLabel.topAnchor
+                    .constraint(
+                        equalTo: textFieldContainer.bottomAnchor,
+                        constant: 8
+                    ),
+                errorLabel.leadingAnchor
+                    .constraint(equalTo: view.leadingAnchor, constant: 16),
+                errorLabel.trailingAnchor
+                    .constraint(equalTo: view.trailingAnchor, constant: -16),
 
                 nameTextField.leadingAnchor
                     .constraint(
@@ -189,7 +221,20 @@ extension NewCategoryViewController: UITextFieldDelegate {
         let current = textField.text ?? ""
         guard let range = Range(range, in: current) else { return true }
         let newText = current.replacingCharacters(in: range, with: string)
-        return newText.count <= Layout.maxLength
+        if newText.count > Layout.maxLength {
+            errorLabel.text = String(
+                format: NSLocalizedString(
+                    "tracker_name_limit_error",
+                    comment: ""
+                ),
+                Layout.maxLength
+            )
+            errorLabel.isHidden = false
+            return false
+        } else {
+            errorLabel.isHidden = true
+            return true
+        }
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

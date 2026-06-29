@@ -10,29 +10,36 @@ import Foundation
 // MARK: - View Protocol
 
 protocol TrackersViewProtocol: AnyObject {
-    func showPlaceholder()
+    func showEmptyDayPlaceholder()
+    func showNotFoundPlaceholder()
     func hidePlaceholder()
     func reloadTrackers()
     func presentTrackerCreation()
+    func showFilterButton()
+    func hideFilterButton()
+    func updateCurrentDate(_ date: Date)
+    func presentTrackerEdit(tracker: Tracker, categoryTitle: String, completedDays: Int)
+    func showDeleteConfirmation(onConfirm: @escaping () -> Void)
 }
 
 // MARK: - Presenter Protocol
 
 protocol TrackersPresenterProtocol: AnyObject {
-    
+
     // MARK: - Lifecycle
-    
+
     func viewDidLoad()
-    
+
     // MARK: - User Actions
-    
+
     func didTapAddButton()
     func didChangeDate(_ date: Date)
     func didChangeSearchText(_ text: String)
     func didTapTrackerAction(at indexPath: IndexPath)
-    
+    func didSelectFilter(_ filter: TrackerFilter)
+
     // MARK: - Collection View Data Source
-    
+
     func numberOfSections() -> Int
     func numberOfTrackers(in section: Int) -> Int
     func tracker(at indexPath: IndexPath) -> Tracker
@@ -40,8 +47,15 @@ protocol TrackersPresenterProtocol: AnyObject {
     func isTrackerCompleted(at indexPath: IndexPath) -> Bool
     func completedCount(for trackerId: UUID) -> Int
     func isActionButtonEnabled() -> Bool
-    
-    // MARK: - Adding New Trackers
-    
+
+    // MARK: - Filter State
+
+    var currentFilter: TrackerFilter { get }
+
+    // MARK: - Adding / Editing / Deleting Trackers
+
     func addTracker(_ tracker: Tracker, toCategoryTitled categoryTitle: String)
+    func updateTracker(_ tracker: Tracker, inCategory categoryTitle: String)
+    func deleteTracker(at indexPath: IndexPath)
+    func editTracker(at indexPath: IndexPath)
 }

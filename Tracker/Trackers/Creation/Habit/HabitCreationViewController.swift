@@ -14,8 +14,28 @@ final class HabitCreationViewController: UIViewController {
     weak var delegate: TrackerCreationDelegate? {
         didSet { presenter.delegate = delegate }
     }
-    
-    private let presenter = HabitCreationPresenter()
+
+    private let presenter: HabitCreationPresenter
+    private let completedDays: Int
+    private var nameFieldTopConstraint: NSLayoutConstraint?
+
+    // MARK: - Init
+
+    init(
+        editingTracker: Tracker? = nil,
+        categoryTitle: String? = nil,
+        completedDays: Int = 0
+    ) {
+        self.completedDays = completedDays
+        presenter = HabitCreationPresenter(
+            editingTracker: editingTracker,
+            categoryTitle: categoryTitle
+        )
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { nil }
     
     // MARK: - UI Elements
     
@@ -156,6 +176,15 @@ final class HabitCreationViewController: UIViewController {
         return view
     }()
 
+    private lazy var completedDaysLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.textColor = .ypBlack
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
     private lazy var emojiColorPicker: EmojiColorPickerView = {
         let view = EmojiColorPickerView()
         view.delegate = self
@@ -171,7 +200,36 @@ final class HabitCreationViewController: UIViewController {
         presenter.view = self
         setupLayout()
         presenter.viewDidLoad()
-        
+
+        if presenter.editingTracker != nil {
+            titleLabel.text = NSLocalizedString(
+                "edit_habit_title",
+                comment: "Заголовок экрана редактирования привычки"
+            )
+            createButton.setTitle(
+                NSLocalizedString(
+                    "save_button_title",
+                    comment: "Кнопка 'Сохранить'"
+                ),
+                for: .normal
+            )
+            nameTextField.text = presenter.name
+            emojiColorPicker.selectedEmojiIndex = presenter.selectedEmojiIndex
+            emojiColorPicker.selectedColorIndex = presenter.selectedColorIndex
+
+            completedDaysLabel.text = String.localizedStringWithFormat(
+                NSLocalizedString("tracker_completed_days", comment: ""),
+                completedDays
+            )
+            completedDaysLabel.isHidden = false
+            nameFieldTopConstraint?.isActive = false
+            nameFieldTopConstraint = nameTextField.topAnchor.constraint(
+                equalTo: completedDaysLabel.bottomAnchor,
+                constant: 40
+            )
+            nameFieldTopConstraint?.isActive = true
+        }
+
         let tap = UITapGestureRecognizer(
             target: self,
             action: #selector(dismissKeyboard)
@@ -188,6 +246,8 @@ final class HabitCreationViewController: UIViewController {
         scrollView.addSubview(scrollContentView)
 
         scrollContentView.addSubview(titleLabel)
+        scrollContentView.addSubview(completedDaysLabel)
+        completedDaysLabel.isHidden = true
         scrollContentView.addSubview(nameTextField)
         scrollContentView.addSubview(errorLabel)
         scrollContentView.addSubview(optionsContainer)
@@ -195,6 +255,12 @@ final class HabitCreationViewController: UIViewController {
         scrollContentView.addSubview(emojiColorPicker)
 
         let optionsHeight: CGFloat = 75 * 2
+
+        let nameFieldTop = nameTextField.topAnchor.constraint(
+            equalTo: titleLabel.bottomAnchor,
+            constant: 38
+        )
+        nameFieldTopConstraint = nameFieldTop
 
         NSLayoutConstraint.activate(
             [
@@ -236,8 +302,12 @@ final class HabitCreationViewController: UIViewController {
                 titleLabel.centerXAnchor
                     .constraint(equalTo: scrollContentView.centerXAnchor),
 
-                nameTextField.topAnchor
-                    .constraint(equalTo: titleLabel.bottomAnchor, constant: 38),
+                completedDaysLabel.topAnchor
+                    .constraint(equalTo: titleLabel.bottomAnchor, constant: 24),
+                completedDaysLabel.centerXAnchor
+                    .constraint(equalTo: scrollContentView.centerXAnchor),
+
+                nameFieldTop,
                 nameTextField.leadingAnchor
                     .constraint(
                         equalTo: scrollContentView.leadingAnchor,
@@ -397,7 +467,13 @@ extension HabitCreationViewController: UITextFieldDelegate {
         
         if newText.count > TrackerConstants.trackerNameMaxLength {
             setNameError(
-                "Ограничение \(TrackerConstants.trackerNameMaxLength) символов"
+                String(
+                    format: NSLocalizedString(
+                        "tracker_name_limit_error",
+                        comment: "Ошибка превышения длины названия трекера"
+                    ),
+                    TrackerConstants.trackerNameMaxLength
+                )
             )
             return false
         } else {

@@ -22,7 +22,7 @@ final class EmojiColorPickerView: UIView {
         var title: String {
             switch self {
             case .emoji: return "Emoji"
-            case .color: return "Цвет"
+            case .color: return NSLocalizedString("color_section_title", comment: "Заголовок секции выбора цвета")
             }
         }
     }

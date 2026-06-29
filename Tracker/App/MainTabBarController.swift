@@ -18,9 +18,15 @@ final class MainTabBarController: UITabBarController {
         var title: String {
             switch self {
             case .trackers:
-                return "Трекеры"
+                return NSLocalizedString(
+                    "trackers_title",
+                    comment: "Вкладка трекеров"
+                )
             case .statistics:
-                return "Статистика"
+                return NSLocalizedString(
+                    "statistics_title",
+                    comment: "Вкладка статистики"
+                )
             }
         }
         
@@ -53,6 +59,7 @@ final class MainTabBarController: UITabBarController {
     private func setupTabBarAppearance() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .ypWhite
         appearance.shadowColor = .ypGray
         tabBar.standardAppearance = appearance
         tabBar.scrollEdgeAppearance = appearance
@@ -86,11 +93,17 @@ final class MainTabBarController: UITabBarController {
     }
     
     private func makeStatisticsTab() -> UINavigationController {
+        let trackerStore = TrackerStore()
+        let recordStore = TrackerRecordStore()
+
         let viewController = StatisticsViewController()
-        let presenter = StatisticsPresenter()
+        let presenter = StatisticsPresenter(
+            trackerStore: trackerStore,
+            recordStore: recordStore
+        )
         viewController.presenter = presenter
         presenter.view = viewController
-        
+
         let navController = UINavigationController(
             rootViewController: viewController
         )
